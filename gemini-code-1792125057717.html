@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>திறன் (THIRAN) வகுப்பு 9 - தமிழ் பயிற்சி நூல்</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #3730a3;
+      --primary-light: #e0e7ff;
+      --accent-grade: #0d9488;
+      --accent-grade-light: #ccfbf1;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --warning: #ca8a04;
+      --warning-bg: #fef9c3;
+      --danger: #dc2626;
+      --danger-bg: #fee2e2;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', 'Nirmala UI', 'Latha', system-ui, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Sticky Top Header & Top-Right Progress Bar */
+    .top-header {
+      position: sticky; top: 0; z-index: 100; background: var(--card);
+      border-bottom: 2px solid #e2e8f0; padding: 10px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04); gap: 15px; flex-wrap: wrap;
+    }
+    .header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .gov-badge {
+      background: linear-gradient(135deg, #1e3a8a, #4f46e5); color: white; font-weight: 800;
+      padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; letter-spacing: 0.5px;
+    }
+    .student-badge { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+    .student-badge strong { color: var(--text); }
+    .btn-switch-user {
+      background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;
+      padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-switch-user:hover { background: #fecaca; }
+
+    /* Top-Right Visual Progress Bar */
+    .progress-widget {
+      display: flex; align-items: center; gap: 18px;
+      background: #f1f5f9; padding: 8px 16px; border-radius: 12px;
+      border: 1px solid #cbd5e1;
+    }
+    .stat-item { font-size: 0.83rem; color: var(--muted); font-weight: 600; }
+    .stat-item strong { color: var(--primary-dark); font-size: 0.92rem; }
+    .progress-container { width: 170px; }
+    .progress-label {
+      display: flex; justify-content: space-between; font-size: 0.76rem;
+      font-weight: 700; margin-bottom: 4px; color: var(--text);
+    }
+    .progress-track {
+      width: 100%; height: 10px; background: #cbd5e1;
+      border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, #4f46e5, #16a34a);
+      transition: width 0.4s ease;
+    }
+
+    /* Welcome / Login Overlay Screen */
+    #welcome-screen {
+      position: fixed; inset: 0; background: linear-gradient(135deg, #0a1931 0%, #1e3a8a 100%);
+      z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px;
+      overflow-y: auto;
+    }
+    .welcome-card {
+      background: var(--card); max-width: 580px; width: 100%; border-radius: 16px;
+      padding: 28px 32px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.45); margin: auto;
+    }
+    .welcome-card h1 { margin: 0 0 6px; color: var(--primary); font-size: 1.55rem; }
+    .welcome-card p.sub { margin: 0 0 18px; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+    /* Mode Tabs */
+    .auth-tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      background: #f1f5f9; padding: 5px; border-radius: 10px; margin-bottom: 18px;
+    }
+    .tab-btn {
+      padding: 10px; border: none; border-radius: 7px; font-weight: 700;
+      font-size: 0.88rem; cursor: pointer; background: transparent; color: var(--muted);
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: var(--card); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 10px; }
+    .form-group.full { grid-column: span 2; }
+    .form-group label { display: block; font-size: 0.83rem; font-weight: 700; margin-bottom: 5px; color: #334155; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px 12px; border: 2px solid #cbd5e1; border-radius: 8px;
+      font-size: 0.94rem; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
+    .btn-primary {
+      width: 100%; background: var(--primary); color: white; border: none;
+      padding: 12px; border-radius: 8px; font-size: 0.96rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s; margin-top: 6px;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .error-msg {
+      background: var(--danger-bg); color: var(--danger); padding: 10px 12px;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; display: none;
+    }
+
+    /* Quick Saved Profiles List */
+    .saved-profiles-box {
+      margin-top: 18px; border-top: 1px solid #e2e8f0; padding-top: 14px;
+    }
+    .saved-profiles-title {
+      font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px; letter-spacing: 0.5px;
+    }
+    .profile-pill {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #f8fafc; border: 1px solid #cbd5e1; padding: 9px 12px;
+      border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: all 0.15s;
+    }
+    .profile-pill:hover { border-color: var(--primary); background: var(--primary-light); }
+    .profile-pill-info { font-size: 0.86rem; }
+    .profile-pill-info strong { color: var(--text); }
+    .profile-pill-meta { font-size: 0.78rem; color: var(--primary); font-weight: 700; }
+
+    /* Workspace Layout */
+    .workspace { display: flex; flex: 1; }
+    .sidebar {
+      width: 320px; background: var(--card); border-right: 1px solid #e2e8f0;
+      padding: 14px; overflow-y: auto; max-height: calc(100vh - 64px);
+      position: sticky; top: 64px;
+    }
+    .sidebar-section-title {
+      font-size: 0.74rem; letter-spacing: 0.5px;
+      color: white; background: var(--primary); padding: 6px 10px; border-radius: 6px;
+      font-weight: 800; margin: 8px 0 6px 0;
+    }
+    .sidebar-section-title.grade-lvl {
+      background: var(--accent-grade); margin-top: 14px;
+    }
+    .nav-btn {
+      width: 100%; padding: 8px 10px; border: none; background: transparent;
+      text-align: left; border-radius: 7px; cursor: pointer; font-size: 0.84rem;
+      font-weight: 600; color: #475569; display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 2px; transition: all 0.15s;
+    }
+    .nav-btn:hover { background: #f1f5f9; }
+    .nav-btn.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 800; }
+    .nav-btn.cert-btn {
+      background: linear-gradient(135deg, #0f2557, #1e3a8a); color: #fde047;
+      border: 1px solid #eab308; margin-top: 12px; padding: 11px 12px; font-weight: 800; font-size: 0.86rem;
+    }
+    .nav-btn.cert-btn:hover { opacity: 0.95; }
+    .nav-btn.cert-btn.active { background: linear-gradient(135deg, #071330, #172554); color: #facc15; box-shadow: 0 0 0 2px #eab308; }
+    .star { color: #cbd5e1; font-size: 1rem; }
+    .star.earned { color: #facc15; text-shadow: 0 0 2px rgba(0,0,0,0.4); }
+
+    /* Main Content Area */
+    .main { flex: 1; padding: 28px 36px; max-width: 980px; margin: 0 auto; }
+    .module-card {
+      background: var(--card); padding: 28px; border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06); display: none;
+    }
+    .module-card.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .mod-header-row {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+    }
+    .mod-header-row h2 { margin: 0; color: var(--primary); border: none; padding: 0; font-size: 1.35rem; }
+    .set-badge {
+      background: var(--primary-light); color: var(--primary-dark); font-size: 0.76rem;
+      font-weight: 700; padding: 5px 10px; border-radius: 99px;
+    }
+    .grade-tag {
+      background: var(--accent-grade-light); color: #0f766e; font-size: 0.74rem;
+      font-weight: 800; padding: 4px 9px; border-radius: 6px;
+    }
+
+    .question-block {
+      background: #f8fafc; border: 1px solid #e2e8f0; padding: 18px;
+      border-radius: 8px; margin-bottom: 18px;
+    }
+    .question-title { font-weight: 700; margin-bottom: 8px; display: block; color: #1e293b; line-height: 1.5; }
+    .passage {
+      background: #eff6ff; border-left: 4px solid var(--primary);
+      padding: 14px; margin-bottom: 16px; line-height: 1.7; border-radius: 0 8px 8px 0; font-size: 0.93rem;
+    }
+    .q-input {
+      padding: 8px 12px; border: 2px solid #cbd5e1; border-radius: 6px;
+      font-size: 0.94rem; min-width: 240px; max-width: 100%; margin: 3px 0;
+    }
+    .q-input:focus { outline: none; border-color: var(--primary); }
+    .correct-input { border-color: var(--success) !important; background-color: var(--success-bg) !important; }
+    .wrong-input { border-color: var(--danger) !important; background-color: var(--danger-bg) !important; }
+
+    .btn-check {
+      background: var(--primary); color: white; border: none; padding: 11px 22px;
+      border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-check:hover { background: var(--primary-dark); }
+    .btn-gold-download {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #09152b; border: 2px solid #fde047; padding: 11px 20px;
+      border-radius: 8px; font-size: 0.92rem; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3); transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-gold-download:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(217, 119, 6, 0.45); }
+    .btn-secondary {
+      background: #e2e8f0; color: #1e293b; border: none; padding: 10px 16px;
+      border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; margin-left: 8px;
+    }
+    .btn-shuffle {
+      background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 10px 14px;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-left: 8px;
+    }
+    .btn-shuffle:hover { background: #e2e8f0; color: var(--text); }
+    .feedback { margin-top: 15px; font-weight: 700; padding: 12px; border-radius: 8px; display: none; line-height: 1.5; }
+
+    /* ============================================================
+       ROYAL BLUE & GOLDEN LETTERS CERTIFICATE STYLING
+       ============================================================ */
+    .certificate-frame {
+      background: radial-gradient(circle at center, #1e3a8a 0%, #0f2557 55%, #071330 100%);
+      border: 6px solid #d4af37;
+      outline: 2px solid #fef08a;
+      outline-offset: -12px;
+      padding: 26px 26px 20px;
+      border-radius: 12px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 16px;
+      box-shadow: 0 14px 32px rgba(7, 19, 48, 0.4), inset 0 0 50px rgba(250, 204, 21, 0.1);
+      color: #fef08a;
+      overflow: hidden;
+    }
+    .certificate-frame::before, .certificate-frame::after {
+      content: "✦"; position: absolute; top: 14px; font-size: 1.35rem; color: #facc15;
+    }
+    .certificate-frame::before { left: 20px; }
+    .certificate-frame::after { right: 20px; }
+
+    .cert-emblem {
+      width: 50px; height: 50px; margin: 0 auto 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fef08a 0%, #eab308 60%, #a16207 100%);
+      border: 2.5px solid #fffbeb;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; color: #071330;
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.5);
+    }
+    .cert-header {
+      font-size: 0.84rem; font-weight: 800; letter-spacing: 1px;
+      color: #fde047;
+    }
+    .cert-title {
+      font-size: 1.75rem; font-weight: 900; margin: 6px 0 6px;
+      color: #fde047;
+      background: linear-gradient(180deg, #fffbeb 0%, #fde047 45%, #eab308 85%, #ca8a04 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: 0.8px;
+    }
+    .cert-subtitle {
+      margin: 2px 0 5px; color: #fde68a; font-size: 0.88rem;
+    }
+    .cert-student-name {
+      font-size: 1.75rem; font-weight: 900;
+      color: #fef08a;
+      background: linear-gradient(180deg, #ffffff 0%, #fef08a 50%, #f59e0b 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      border-bottom: 2px solid #eab308;
+      display: inline-block; padding: 0 26px 4px; margin: 3px 0 8px;
+    }
+    .cert-details {
+      font-size: 0.92rem; line-height: 1.5; color: #fef9c3;
+      max-width: 680px; margin: 3px auto 10px;
+    }
+    .cert-details strong { color: #facc15; }
+
+    .congrats-banner {
+      background: rgba(250, 204, 21, 0.14); color: #fef08a;
+      border: 1.5px solid #eab308; padding: 9px 14px; border-radius: 8px;
+      font-weight: 700; margin: 8px auto; max-width: 720px;
+      line-height: 1.5; font-size: 0.86rem;
+    }
+
+    .cert-stats-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin: 12px auto; max-width: 660px;
+    }
+    .cert-stat-card {
+      background: rgba(7, 19, 48, 0.7); border: 1.5px solid #eab308;
+      padding: 8px 10px; border-radius: 8px;
+    }
+    .cert-stat-card span {
+      display: block; font-size: 0.68rem; color: #fde68a;
+      font-weight: 700; margin-bottom: 2px;
+    }
+    .cert-stat-card strong { font-size: 1.2rem; color: #facc15; }
+    .cert-dates-line { font-size: 0.76rem; color: #fde68a; margin: 8px 0 0; opacity: 0.92; }
+    .cert-designer-credit {
+      margin-top: 10px; padding-top: 7px;
+      border-top: 1px solid rgba(234, 179, 8, 0.45);
+      font-size: 0.82rem; font-weight: 800; letter-spacing: 1.2px;
+      text-transform: uppercase; color: #facc15;
+    }
+
+    /* Compact 25-Module Daily Work Log Section */
+    .log-section-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin: 6px 0 6px; flex-wrap: wrap; gap: 6px;
+    }
+    .log-section-header h3 { margin: 0; font-size: 0.98rem; color: #0f2557; }
+    .log-section-header p { margin: 0; color: var(--muted); font-size: 0.78rem; }
+
+    .log-grid-two-col {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
+    .log-table th, .log-table td { border: 1px solid #cbd5e1; padding: 4.5px 6px; }
+    .log-table th { background: #0f2557; color: #fde047; font-weight: 700; font-size: 0.7rem; }
+    .log-table tr:nth-child(even) { background: #f8fafc; }
+    .badge-done { background: var(--success-bg); color: var(--success); padding: 1.5px 6px; border-radius: 99px; font-weight: 700; font-size: 0.68rem; display: inline-block; }
+    .badge-pending { background: #f1f5f9; color: var(--muted); padding: 1.5px 6px; border-radius: 99px; font-weight: 600; font-size: 0.68rem; display: inline-block; }
+
+    /* Bottom Footer Credit */
+    .app-footer {
+      background: #0a1931; color: #fde047; text-align: center;
+      padding: 12px 20px; font-size: 0.86rem; font-weight: 700;
+      letter-spacing: 0.6px; border-top: 2px solid #eab308; margin-top: auto;
+    }
+
+    /* ============================================================
+       STRICT SINGLE-PAGE A4 PORTRAIT PRINT STYLES (ALL 25 MODULES)
+       ============================================================ */
+    @page {
+      size: A4 portrait;
+      margin: 5mm 7mm;
+    }
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      html, body {
+        width: 100%; height: auto; margin: 0 !important; padding: 0 !important; background: #ffffff !important;
+      }
+      .top-header, .sidebar, .no-print, .app-footer, #welcome-screen, #modules-container {
+        display: none !important;
+      }
+      .workspace, .main {
+        display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;
+      }
+      #cert-view {
+        display: block !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; border: none !important;
+        page-break-inside: avoid !important; break-inside: avoid !important;
+      }
+      .certificate-frame {
+        padding: 10px 16px 8px !important; margin-bottom: 6px !important;
+        border-width: 4px !important; outline-width: 1.5px !important; outline-offset: -7px !important;
+        border-radius: 8px !important; box-shadow: none !important;
+      }
+      .cert-emblem { width: 30px !important; height: 30px !important; font-size: 0.95rem !important; margin: 0 auto 3px !important; }
+      .cert-header { font-size: 0.64rem !important; }
+      .cert-title {
+        font-size: 1.2rem !important; margin: 2px 0 3px !important;
+        background: none !important; -webkit-text-fill-color: #fde047 !important; color: #fde047 !important; filter: none !important;
+      }
+      .cert-subtitle { font-size: 0.68rem !important; margin: 1px 0 2px !important; }
+      .cert-student-name {
+        font-size: 1.2rem !important; padding: 0 16px 2px !important; margin: 1px 0 4px !important;
+        background: none !important; -webkit-text-fill-color: #ffffff !important; color: #ffffff !important; filter: none !important;
+      }
+      .cert-details { font-size: 0.72rem !important; line-height: 1.3 !important; margin: 2px auto 4px !important; }
+      .congrats-banner { padding: 5px 10px !important; margin: 4px auto !important; font-size: 0.68rem !important; line-height: 1.25 !important; }
+      .cert-stats-grid { gap: 8px !important; margin: 5px auto !important; max-width: 540px !important; }
+      .cert-stat-card { padding: 4px 6px !important; border-radius: 5px !important; }
+      .cert-stat-card span { font-size: 0.55rem !important; }
+      .cert-stat-card strong { font-size: 0.92rem !important; }
+      .cert-dates-line { font-size: 0.62rem !important; margin-top: 4px !important; }
+      .cert-designer-credit { margin-top: 5px !important; padding-top: 3px !important; font-size: 0.64rem !important; }
+
+      .log-section-header { margin: 3px 0 3px !important; }
+      .log-section-header h3 { font-size: 0.76rem !important; }
+      .log-section-header p { font-size: 0.6rem !important; }
+      .log-grid-two-col { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .log-table { font-size: 0.6rem !important; }
+      .log-table th, .log-table td { padding: 2.8px 4px !important; line-height: 1.1 !important; }
+      .log-table th { font-size: 0.58rem !important; }
+      .badge-done, .badge-pending { font-size: 0.55rem !important; padding: 1px 4px !important; }
+    }
+
+    @media (max-width: 850px) {
+      .workspace { flex-direction: column; }
+      .sidebar { width: 100%; max-height: none; position: static; }
+      .main { padding: 18px; }
+      .log-grid-two-col { grid-template-columns: 1fr; }
+      .cert-stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WELCOME & MULTI-STUDENT LOGIN MODAL -->
+  <div id="welcome-screen">
+    <div class="welcome-card">
+      <h1>திறன் (THIRAN) வகுப்பு 9 - தமிழ் பயிற்சி நூல்</h1>
+      <p class="sub"><strong>பகுதி 1: அடிப்படை மொழித்திறன்கள் (1–15)</strong> மற்றும் <strong>பகுதி 2: வகுப்புநிலைத் திறன்கள் (16–25)</strong> கொண்ட முழுமையான இணையவழிப் பயிற்சித் தளம். விட்ட இடத்திலிருந்து தொடர உங்கள் <strong>வரிசை எண் (Roll No) &amp; பள்ளியின் பெயரை</strong> உள்ளிடவும்!</p>
+
+      <div class="auth-tabs">
+        <button type="button" class="tab-btn active" id="tab-login-btn" onclick="switchAuthTab('login')">🔄 விட்ட இடத்திலிருந்து தொடர (Resume)</button>
+        <button type="button" class="tab-btn" id="tab-reg-btn" onclick="switchAuthTab('register')">✨ புதிய மாணவர் பதிவு (New Student)</button>
+      </div>
+
+      <div id="auth-error" class="error-msg"></div>
+
+      <!-- TAB 1: RETURNING STUDENT LOGIN -->
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="login-roll">வரிசை எண் (Roll Number) *</label>
+            <input type="text" id="login-roll" required placeholder="எ.கா: 901">
+          </div>
+          <div class="form-group">
+            <label for="login-school">பள்ளியின் பெயர் (School Name) *</label>
+            <input type="text" id="login-school" required placeholder="எ.கா: அரசு மேல்நிலைப்பள்ளி">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">எனது பயிற்சியைத் தொடரவும் &rarr;</button>
+
+        <div class="saved-profiles-box" id="saved-profiles-container" style="display:none;">
+          <div class="saved-profiles-title">📂 அல்லது இந்தக் கருவியில் சேமிக்கப்பட்டுள்ள உங்கள் பெயரைத் தேர்ந்தெடுக்கவும்:</div>
+          <div id="saved-profiles-list"></div>
+        </div>
+      </form>
+
+      <!-- TAB 2: NEW STUDENT REGISTRATION -->
+      <form id="register-form" style="display:none;" onsubmit="handleRegister(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="reg-name">மாணவர் பெயர் (Student Full Name) *</label>
+            <input type="text" id="reg-name" required placeholder="எ.கா: கதிர்செல்வன். ச">
+          </div>
+          <div class="form-group">
+            <label for="reg-class">வகுப்பு (Class) *</label>
+            <select id="reg-class" required>
+              <option value="வகுப்பு 9" selected>வகுப்பு 9 (Class 9)</option>
+              <option value="வகுப்பு 8">வகுப்பு 8 (Class 8)</option>
+              <option value="வகுப்பு 7">வகுப்பு 7 (Class 7)</option>
+              <option value="வகுப்பு 6">வகுப்பு 6 (Class 6)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="reg-sec">பிரிவு (Section) *</label>
+            <input type="text" id="reg-sec" required placeholder="எ.கா: அ / A">
+          </div>
+          <div class="form-group">
+            <label for="reg-roll">வரிசை எண் (Roll Number) *</label>
+            <input type="text" id="reg-roll" required placeholder="எ.கா: 901">
+          </div>
+          <div class="form-group">
+            <label for="reg-school">பள்ளியின் பெயர் (School Name) *</label>
+            <input type="text" id="reg-school" required placeholder="எ.கா: அரசு மேல்நிலைப்பள்ளி">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">பதிவு செய்து பயிற்சியைத் தொடங்குக &rarr;</button>
+      </form>
+      <div style="text-align:center; margin-top:16px; font-size:0.8rem; color:#64748b; font-weight:700;">
+        Designed by Thiraviya Kumar G
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY TOP HEADER WITH TOP-RIGHT PROGRESS BAR -->
+  <header class="top-header">
+    <div class="header-left">
+      <div class="gov-badge">திறன் (THIRAN) தமிழ் - வகுப்பு 9</div>
+      <div class="student-badge" id="header-student-info">உள்நுழையவில்லை</div>
+      <button class="btn-switch-user" onclick="logoutCurrentStudent()">🔄 மாணவர் மாற்றம் (Switch Student)</button>
+    </div>
+
+    <div class="progress-widget">
+      <div class="stat-item">⭐ அலகுகள்: <strong id="hdr-modules">0 / 25</strong></div>
+      <div class="stat-item">⏱️ கற்றல் நேரம்: <strong id="hdr-timer">0m 0s</strong></div>
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>தேர்ச்சி முன்னேற்றம்</span>
+          <span id="hdr-percent">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="hdr-bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN WORKSPACE -->
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="sidebar-section-title">பகுதி 1: அடிப்படை மொழித்திறன்கள் (1–15)</div>
+      <div id="nav-list-fundamental"></div>
+
+      <div class="sidebar-section-title grade-lvl">பகுதி 2: வகுப்புநிலைத் திறன்கள் (16–25)</div>
+      <div id="nav-list-grade"></div>
+
+      <button class="nav-btn cert-btn" id="btn-cert-nav" onclick="showCertificate()">
+        <span>🎓 A4 சான்றிதழ் &amp; பணிப் பதிவேடு</span>
+        <span>&rarr;</span>
+      </button>
+    </aside>
+
+    <main class="main">
+      <div id="modules-container"></div>
+
+      <!-- SINGLE-PAGE A4 PORTRAIT CERTIFICATE & DAILY WORK LOG VIEW -->
+      <div class="module-card" id="cert-view">
+        <div class="no-print" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <h2 style="margin:0; border:none;">🎓 பாராட்டுச் சான்றிதழ் &amp; தினசரிப் பணிப் பதிவேடு (A4)</h2>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <button class="btn-gold-download" onclick="downloadA4PortraitSheet()">⬇️ Download A4 Certificate &amp; Log (PNG)</button>
+            <button class="btn-check" onclick="window.print()">🖨️ Print / Save 1-Page A4 PDF</button>
+            <button class="btn-secondary" style="margin-left:0;" onclick="resetCurrentStudent()">🗑️ Reset My Progress</button>
+          </div>
+        </div>
+
+        <!-- ROYAL BLUE & GOLDEN CERTIFICATE -->
+        <div class="certificate-frame" id="certificate-box">
+          <div class="cert-emblem">🏆</div>
+          <div class="cert-header">பள்ளிக் கல்வித்துறை • தமிழ்நாடு அரசு (THIRAN - வகுப்பு 9 தமிழ்)</div>
+          <div class="cert-title">தேர்ச்சி மற்றும் நிறைவுச் சான்றிதழ்</div>
+          <p class="cert-subtitle">இச்சான்றிதழ் பெருமையுடன் வழங்கப்படுவது</p>
+          <div class="cert-student-name" id="cert-name">மாணவர் பெயர்</div>
+          <div class="cert-details" id="cert-meta">
+            வகுப்பு &amp; பிரிவு • வரிசை எண் • பள்ளியின் பெயர்
+          </div>
+
+          <div class="congrats-banner" id="cert-congrats">
+            தொடர்ந்து முயற்சி செய்யுங்கள்! 25 அலகுகளையும் உங்கள் கற்றல் வேகத்தில் நிறைவு செய்து முழுத் தேர்ச்சி பெறுங்கள்!
+          </div>
+
+          <div class="cert-stats-grid">
+            <div class="cert-stat-card">
+              <span>மொத்தத் தேர்ச்சி சதவீதம்</span>
+              <strong id="cert-mastery">0%</strong>
+            </div>
+            <div class="cert-stat-card">
+              <span>எடுத்துக்கொண்ட கற்றல் நேரம்</span>
+              <strong id="cert-duration">0m 0s</strong>
+            </div>
+            <div class="cert-stat-card">
+              <span>நிறைவு செய்த அலகுகள்</span>
+              <strong id="cert-mod-count">0 / 25</strong>
+            </div>
+          </div>
+
+          <p class="cert-dates-line" id="cert-span-dates">
+            தொடங்கிய நாள்: -- | கடைசியாகப் பயிற்சி செய்தது: --
+          </p>
+
+          <div class="cert-designer-credit">
+            ✦ Designed by Thiraviya Kumar G ✦
+          </div>
+        </div>
+
+        <!-- COMPACT TWO-COLUMN 25-MODULE DAILY WORK LOG TABLE (FITS ON 1 A4 PAGE) -->
+        <div class="log-section-header">
+          <h3>📅 தினசரிப் பணிப் பதிவேடு ("என்னால் முடியும்! நானே செய்வேன்!" - 25 அலகுகள்)</h3>
+          <p>அனைத்து 25 அலகுகளும் ஒரே A4 பக்கத்தில் பொருந்தும் வகையில் வடிவமைக்கப்பட்டுள்ளது.</p>
+        </div>
+        <div class="log-grid-two-col">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>பகுதி 1: அடிப்படைத் திறன்கள் (1–15)</th>
+                <th>நிலை</th>
+                <th>மதிப்பெண்</th>
+                <th>நாள்</th>
+              </tr>
+            </thead>
+            <tbody id="log-table-left"></tbody>
+          </table>
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>பகுதி 2: வகுப்புநிலைத் திறன்கள் (16–25)</th>
+                <th>நிலை</th>
+                <th>மதிப்பெண்</th>
+                <th>நாள்</th>
+              </tr>
+            </thead>
+            <tbody id="log-table-right"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- BOTTOM LINE CREDIT FOOTER -->
+  <footer class="app-footer">
+    திறன் (THIRAN) வகுப்பு 9 - தமிழ் பயிற்சி நூல் இணையதளம் • Designed by Thiraviya Kumar G
+  </footer>
+
+  <script>
+    const QUESTIONS_PER_MODULE = 5;
+
+    // ============================================================================
+    // COMPLETE CLASS 9 TAMIL QUESTION BANK: 25 MODULES (15 FUNDAMENTAL + 10 GRADE)
+    // ============================================================================
+    const MODULES_DATA = [
+      // ---------------- பகுதி 1: அடிப்படை மொழித்திறன்கள் (பக்கம் 1–49) ----------------
+      {
+        id: 1, category: "fundamental", title: "1. எழுத்துகளை அறிதல் - 1",
+        desc: "சொற்கள், குறில்-நெடில் மற்றும் 'தங்க மகன் நீரஜ் சோப்ரா' பத்தி (பக்கம் 1–5).",
+        passage: "தங்க மகன் நீரஜ் சோப்ரா (பக்கம் 4): இந்திய ஈட்டி எறிதல் வீரர் நீரஜ் சோப்ரா அரியானா மாநிலத்தைச் சேர்ந்தவர். ஒளவையார் 'ஊக்கமது கைவிடேல்' என்று கூறியதற்கேற்ப, ஒலிம்பிக்கில் ஆண்கள் ஈட்டி எறிதல் பிரிவில் பங்கு கொண்டு தங்கப் பதக்கம் பெற்றார். உலக இளையோர் வாகையர் போட்டியிலும் முதலிடம் பெற்றார். பல்வேறு போட்டிகளில் பங்கேற்று இதுவரை ஏழுமுறை தங்கம் பெற்றுள்ளார்.",
+        questionPool: [
+          { id: "t1q1", q: "'வில்' என்ற சொல் இடம்பெற்றுள்ள கடையேழு வள்ளல்களில் ஒருவரின் பெயர் எது? (பக்கம் 1)", type: "select", options: ["வல்வில்ஓரி", "புல்லாங்குழல்", "சிலப்பதிகாரம்"], ans: "வல்வில்ஓரி" },
+          { id: "t1q2", q: "ஒவ்வொரு எழுத்தாக மாற்றிச் சொல்லை உருவாக்குக: பதவி -> உதவி -> உதவு -> ______ (பக்கம் 3)", type: "select", options: ["உறவு", "பாதம்", "கரம்"], ans: "உறவு" },
+          { id: "t1q3", q: "குறில்-நெடில் எழுத்துகளால் நிரப்புக: '______ருவி கட்டிய ______டு.' (பக்கம் 3)", type: "select", options: ["கு, கூ (குருவி கட்டிய கூடு)", "ப, பா", "க, கா"], ans: "கு, கூ (குருவி கட்டிய கூடு)" },
+          { id: "t1q4", q: "குறில்-நெடில் நிரப்புக: '______ல்லில் அமர்ந்த ______கம்.' (பக்கம் 3)", type: "select", options: ["க, கா (கல்லில் அமர்ந்த காகம்)", "ம, மா", "வ, வா"], ans: "க, கா (கல்லில் அமர்ந்த காகம்)" },
+          { id: "t1q5", q: "இந்திய ஈட்டி எறிதல் வீரர் நீரஜ் சோப்ரா எந்த மாநிலத்தைச் சேர்ந்தவர்?", type: "select", options: ["அரியானா", "கேரளா", "பஞ்சாப்"], ans: "அரியானா" },
+          { id: "t1q6", q: "'ஊக்கமது கைவிடேல்' என்று கூறியவர் யார்?", type: "select", options: ["ஒளவையார்", "திருவள்ளுவர்", "பாரதியார்"], ans: "ஒளவையார்" },
+          { id: "t1q7", q: "நீரஜ் சோப்ரா ஒலிம்பிக்கில் எந்தப் பிரிவில் பங்கு கொண்டு தங்கப் பதக்கம் பெற்றார்?", type: "select", options: ["ஈட்டி எறிதல்", "நீளம் தாண்டுதல்", "வட்டு எறிதல்"], ans: "ஈட்டி எறிதல்" },
+          { id: "t1q8", q: "திசைப்பெட்டித் தொடரை நிறைவு செய்க (பக்கம் 4): 'இரவுப் பூக்கள் மணம் ______.'", type: "select", options: ["வீசும்", "கூடாது", "பழகினான்"], ans: "வீசும்" }
+        ]
+      },
+      {
+        id: 2, category: "fundamental", title: "2. எழுத்துகளை அறிதல் - 2",
+        desc: "உயிர்மெய் வரிசை, 'மானைப் பறவைகள் சுற்றியது ஏன்?' மற்றும் திசைப்பெட்டி (பக்கம் 6–10).",
+        passage: "மானைப் பறவைகள் சுற்றியது ஏன்? (பக்கம் 9): மான் புல் மேயத்தொடங்கியது. அப்போது வெயிலாக இருந்தது. அதனால் மரத்துக்கு அடியில் வந்தது. அங்கு நிழலாக இருந்தது. பழம் ஒன்று கீழே விழுந்தது. மான் கொம்பில் மாட்டியது. பழத்தைக் கொத்த பறவைகள் சுற்றின.",
+        questionPool: [
+          { id: "t2q1", q: "'செடி' என்ற சொல் இடம்பெற்றுள்ள கூட்டுச்சொல் எது? (பக்கம் 6)", type: "select", options: ["வேர்க்கடலைச்செடி", "தொலைக்காட்சி", "புலிக்கொடி"], ans: "வேர்க்கடலைச்செடி" },
+          { id: "t2q2", q: "குறியீடுகளுக்கான எழுத்துகளைக் கொண்டு உருவாகும் மலர்: 'ரு செ த் தி ம் ப' -> ______ (பக்கம் 7)", type: "select", options: ["செம்பருத்தி", "தேக்குமரம்", "ஆம்பல்மலர்"], ans: "செம்பருத்தி" },
+          { id: "t2q3", q: "குறில்-நெடில் நிரப்புக: 'நெல்லைக் ______த்தித் தின்ற ______ழி.' (பக்கம் 8)", type: "select", options: ["கொ, கோ (கொத்தித் தின்ற கோழி)", "ப, பா", "தெ, தே"], ans: "கொ, கோ (கொத்தித் தின்ற கோழி)" },
+          { id: "t2q4", q: "மான் வெயிலாக இருந்ததால் எதற்கு அடியில் வந்தது?", type: "select", options: ["மரத்துக்கு அடியில்", "பாறைக்கு அடியில்", "גגத்துக்கு அடியில்"], ans: "மரத்துக்கு அடியில்" },
+          { id: "t2q5", q: "மரத்திலிருந்து கீழே விழுந்த பழம் மானின் எந்தப் பகுதியில் மாட்டியது?", type: "select", options: ["கொம்பில்", "காலில்", "வாலில்"], ans: "கொம்பில்" },
+          { id: "t2q6", q: "மானின் கொம்பில் மாட்டிய பழத்தைக் ______ பறவைகள் சுற்றின.", type: "select", options: ["கொத்த", "பார்க்க", "தூக்க"], ans: "கொத்த" },
+          { id: "t2q7", q: "திசைப்பெட்டித் தொடர் (பக்கம் 9): 'உழவர் வெங்காயம் ______ செய்தார்.'", type: "select", options: ["சாகுபடி", "விளையாடினர்", "கொத்தியது"], ans: "சாகுபடி" },
+          { id: "t2q8", q: "திசைப்பெட்டித் தொடர் (பக்கம் 9): 'மரங்கொத்தி மரத்தை வேகமாகக் ______.'", type: "select", options: ["கொத்தியது", "செய்தார்", "விளையாடினர்"], ans: "கொத்தியது" }
+        ]
+      },
+      {
+        id: 3, category: "fundamental", title: "3. அகரவரிசைப்படுத்துதல்",
+        desc: "மாவட்டங்களை அகரவரிசைப்படுத்துதல், அகராதிப் பொருள் மற்றும் மரம் நடு விழா (பக்கம் 11–14).",
+        passage: "மரம் நடு விழா (பக்கம் 14): நான் நாவல் மரக்கன்று நட்டேன். கயல் மாங்கன்று நட்டாள். அன்வர் பலாக்கன்று நட்டான். இயல் ஈச்சங்கன்று நட்டாள். ஆதவன் ஆலமரக்கன்று நட்டான். எல்லாரும் மரக்கன்றுகள் நட்டோம்.",
+        questionPool: [
+          { id: "t3q1", q: "அகரவரிசையில் முதலில் வரும் தமிழ்நாடு மாவட்டம் எது? (பக்கம் 11)", type: "select", options: ["அரியலூர்", "ஈரோடு", "சென்னை"], ans: "அரியலூர்" },
+          { id: "t3q2", q: "'அரியலூர், இராமநாதபுரம், இராணிப்பேட்டை' - இதற்கு அடுத்து அகரவரிசையில் வரும் மாவட்டம் எது?", type: "select", options: ["ஈரோடு", "மதுரை", "வேலூர்"], ans: "ஈரோடு" },
+          { id: "t3q3", q: "'தாகத்தினால் அவருக்கு நா வறண்டது... நீரை அள்ளிக் குடித்ததும் தாகம் தணிந்தது.' - 'தணிந்தது' என்பதன் பொருள்:", type: "select", options: ["குறைந்தது / நீங்கியது", "அதிகரித்தது", "சுட்டெரித்தது"], ans: "குறைந்தது / நீங்கியது" },
+          { id: "t3q4", q: "'கோன், மன்னன், வேந்தன், கோ' - இச்சொற்கள் அனைத்தும் யாரைக் குறிக்கும்? (பக்கம் 12)", type: "select", options: ["அரசன்", "உழவன்", "புலவன்"], ans: "அரசன்" },
+          { id: "t3q5", q: "ஒரே எழுத்து இரண்டு முறை இடம்பெற்ற சொல்லைத் தேர்ந்தெடுக்க (பக்கம் 13):", type: "select", options: ["கட்டகம்", "மரங்கள்", "தடகளம்"], ans: "கட்டகம்" },
+          { id: "t3q6", q: "மரம் நடு விழாவில் யார் நட்ட மரக்கன்று சுளைகள் உள்ள பழம் (பலாப்பழம்) தரும்? (பக்கம் 14)", type: "select", options: ["அன்வர் (பலாக்கன்று)", "கயல் (மாங்கன்று)", "இயல் (ஈச்சங்கன்று)"], ans: "அன்வர் (பலாக்கன்று)" },
+          { id: "t3q7", q: "ஆதவன் நட்ட எந்த மரக்கன்று வளர்ந்து விழுதுகள் விடும்? (பக்கம் 14)", type: "select", options: ["ஆலமரக்கன்று", "நாவல் மரக்கன்று", "மாங்கன்று"], ans: "ஆலமரக்கன்று" },
+          { id: "t3q8", q: "சரியா, தவறா? 'நண்பர்கள் எல்லாரும் சேர்ந்து மரக்கன்றுகளை நட்டனர்.' (பக்கம் 14)", type: "select", options: ["சரி", "தவறு"], ans: "சரி" }
+        ]
+      },
+      {
+        id: 4, category: "fundamental", title: "4. சொல் உருவாக்குதல்",
+        desc: "முடியும் எழுத்தில் தொடங்கும் சொல், சொல்லுக்குள் சொல் மற்றும் பிறந்தநாள் விழா (பக்கம் 15–18).",
+        passage: "பிறந்தநாள் விழா (பக்கம் 18): கிளியின் பாடல் எதற்காக? மயிலின் நடனம் எதற்காக? சரம்சரமாய் மலர்கள் எதற்காக? நரியண்ணாவின் பிறந்தநாள் அதற்காக! ஆகா, மகிழ்ச்சி!",
+        questionPool: [
+          { id: "t4q1", q: "முடியும் எழுத்தில் தொடங்கும் அடுத்த சொல் எது? 'புன்னகை' -> ______ (பக்கம் 15)", type: "select", options: ["கைப்பேசி", "மகிழ்ச்சி", "புளிப்பு"], ans: "கைப்பேசி" },
+          { id: "t4q2", q: "'கவிதைநூல்' என்ற சொல்லுக்குள் அமைந்துள்ள சொற்கள் எவை? (பக்கம் 15)", type: "select", options: ["கவி, விதை, நூல், கதை, கல்வி", "மாடு, வண்டி, சக்கரம்", "கப்பல், கடல், அலை"], ans: "கவி, விதை, நூல், கதை, கல்வி" },
+          { id: "t4q3", q: "மெய்யெழுத்தே இடம்பெறாத சொல்லைத் தேர்ந்தெடுக்க (பக்கம் 16):", type: "select", options: ["நிலா, கடலலை", "சிலப்பதிகாரம்", "கண்காட்சி"], ans: "நிலா, கடலலை" },
+          { id: "t4q4", q: "குறில் எழுத்துகள் மட்டுமே இடம்பெறும் சொற்கள் எவை? (பக்கம் 16)", type: "select", options: ["கதவு, குருவி", "வானூர்தி", "நூலகவாயில்"], ans: "கதவு, குருவி" },
+          { id: "t4q5", q: "நீருடன் தொடர்புடைய சொற்களைத் தேர்ந்தெடுக்க (பக்கம் 17):", type: "select", options: ["நீர்ப்பாசனம், நீர்வீழ்ச்சி, தண்ணீர்த்தடாகம்", "மயிலாட்டம், ஒயிலாட்டம்", "மின்சாரக்கம்பி, மின்காந்தங்கள்"], ans: "நீர்ப்பாசனம், நீர்வீழ்ச்சி, தண்ணீர்த்தடாகம்" },
+          { id: "t4q6", q: "ஊர் மக்கள் எல்லாருக்கும் பயன்படுவது எது? (பக்கம் 18)", type: "select", options: ["தண்ணீர்ப் பந்தல்", "மணற்சிற்பம்", "மின்காந்தம்"], ans: "தண்ணீர்ப் பந்தல்" },
+          { id: "t4q7", q: "காட்டில் கிளியின் பாடலும் மயிலின் நடனமும் யாருடைய பிறந்தநாள் விழாவிற்காக நடைபெற்றன? (பக்கம் 18)", type: "select", options: ["நரியண்ணாவின் பிறந்தநாள்", "சிங்கத்தின் பிறந்தநாள்", "யானையின் பிறந்தநாள்"], ans: "நரியண்ணாவின் பிறந்தநாள்" },
+          { id: "t4q8", q: "ஒருவர் தான் படித்த புத்தகம் பற்றிப் பேச எங்கே செல்வார்? (பக்கம் 18)", type: "select", options: ["இலக்கிய மன்றம்", "தண்ணீர்ப்பந்தல்", "பிறந்தநாள் விழா"], ans: "இலக்கிய மன்றம்" }
+        ]
+      },
+      {
+        id: 5, category: "fundamental", title: "5. பெயர், வினை",
+        desc: "அறுவகைப் பெயர்ச்சொற்கள், வினைச்சொற்கள் மற்றும் 'கூடு கட்டினோம்' (பக்கம் 19–22).",
+        passage: "கூடு கட்டினோம் (பக்கம் 22): குருவி குச்சி எடுத்து வந்தது. புறா புல் எடுத்து வந்தது. தூக்கணாங்குருவி நூலை எடுத்து வந்தது. வல்லூறு ஓடு எடுத்து வந்தது. எல்லாரும் சேர்ந்து கூடு கட்டினோம்.",
+        questionPool: [
+          { id: "t5q1", q: "'அல்லி மலர்கள், வாத்துகள், மரங்கள்' - இவை எவ்வகைப் பெயர்ச்சொற்கள்? (பக்கம் 19)", type: "select", options: ["பொருட்பெயர்", "காலப்பெயர்", "தொழிற்பெயர்"], ans: "பொருட்பெயர்" },
+          { id: "t5q2", q: "'குளம், வயல், கரையோரம்' - இவை எவ்வகைப் பெயர்ச்சொற்கள்? (பக்கம் 19)", type: "select", options: ["இடப்பெயர்", "சினைப்பெயர்", "குணப்பெயர்"], ans: "இடப்பெயர்" },
+          { id: "t5q3", q: "'மாலை வேளை, மழைக்காலம்' - இவை எவ்வகைப் பெயர்ச்சொற்கள்? (பக்கம் 19)", type: "select", options: ["காலப்பெயர்", "பொருட்பெயர்", "இடப்பெயர்"], ans: "காலப்பெயர்" },
+          { id: "t5q4", q: "'மரத்தின் கிளை, இறகுகள், கண்கள்' - இவை உறுப்புகளைக் குறிக்கும் எவ்வகைப் பெயர்ச்சொற்கள்?", type: "select", options: ["சினைப்பெயர்", "காலப்பெயர்", "தொழிற்பெயர்"], ans: "சினைப்பெயர்" },
+          { id: "t5q5", q: "பசியை நீக்கக் கூடிய 'உணவு'ப் பொருளைக் குறிக்கும் சொற்கள் எவை? (பக்கம் 20 & 24)", type: "select", options: ["ஊண், உண்டி, அடிசில்", "மழை, காற்று, வானம்", "பந்து, பட்டம், மேசை"], ans: "ஊண், உண்டி, அடிசில்" },
+          { id: "t5q6", q: "'கவிதை, மகாகவி, விடுதலை' - இம்மூன்று சொற்களுக்கும் தொடர்புடைய கவிஞர் யார்? (பக்கம் 22)", type: "select", options: ["பாரதியார்", "கம்பர்", "இளங்கோவடிகள்"], ans: "பாரதியார்" },
+          { id: "t5q7", q: "'கூடு கட்டினோம்' பாடலில் தன் பெயரின் முதல் எழுத்தில் தொடங்கும் பொருளை எடுத்து வந்த பறவைகள் எவை? (பக்கம் 22)", type: "select", options: ["குருவி (குச்சி), புறா (புல்)", "தூக்கணாங்குருவி (நூல்)", "வல்லூறு (ஓடு)"], ans: "குருவி (குச்சி), புறா (புல்)" },
+          { id: "t5q8", q: "'நூல்' மற்றும் 'புள்' ஆகிய சொற்கள் தரும் இரு பொருள்கள் எவை? (பக்கம் 22)", type: "select", options: ["புத்தகம் மற்றும் பறவை", "மரம் மற்றும் செடி", "கடல் மற்றும் மலை"], ans: "புத்தகம் மற்றும் பறவை" }
+        ]
+      },
+      {
+        id: 6, category: "fundamental", title: "6. திணை, பால்",
+        desc: "உயர்திணை, அஃறிணை, ஐம்பால் பகுப்பு மற்றும் 'வேணியின் கருணை' (பக்கம் 23–26).",
+        passage: "வேணி (பக்கம் 26): ஒருநாள் நண்பகல் நேரம். கோடை வெயில் சுட்டெரித்தது. வேணி வெளியே வந்தாள். பெரிய கிண்ணத்தில் தண்ணீர் ஊற்றினாள். சற்று நேரத்தில் வீட்டிற்கு வெளியே பறவைகள் (புறா, குருவி, தேன்சிட்டு) தண்ணீர் குடிக்க வந்தன.",
+        questionPool: [
+          { id: "t6q1", q: "'மலர்விழி, கோவலன், மாணவர்கள், ஆசிரியர்கள்' - இவை எத்திணைக்குரிய சொற்கள்? (பக்கம் 23)", type: "select", options: ["உயர்திணை", "அஃறிணை"], ans: "உயர்திணை" },
+          { id: "t6q2", q: "'எழுதுகோல், விண்மீன்கள், கடிகாரம், பனைமரம்' - இவை எத்திணைக்குரிய சொற்கள்? (பக்கம் 23)", type: "select", options: ["அஃறிணை", "உயர்திணை"], ans: "அஃறிணை" },
+          { id: "t6q3", q: "'கோவலன் வகுப்பறைக்கு வந்தான்' - இதில் 'கோவலன்' என்பது எப்பால்? (பக்கம் 23)", type: "select", options: ["ஆண்பால்", "பெண்பால்", "பலர்பால்"], ans: "ஆண்பால்" },
+          { id: "t6q4", q: "'நிறைமதி சங்குகள் சேகரித்தாள்' - இதில் 'நிறைமதி' என்பது எப்பால்? (பக்கம் 23)", type: "select", options: ["பெண்பால்", "ஆண்பால்", "பலர்பால்"], ans: "பெண்பால்" },
+          { id: "t6q5", q: "'மாணவர்கள் கரும்பலகையில் எழுதினர்' - இதில் 'மாணவர்கள்' என்பது எப்பால்? (பக்கம் 23)", type: "select", options: ["பலர்பால்", "ஒன்றன்பால்", "பலவின்பால்"], ans: "பலர்பால்" },
+          { id: "t6q6", q: "'இரவில் விண்மீன்கள் வானில் மின்னின' - இதில் 'விண்மீன்கள்' என்பது அஃறிணையில் எப்பால்?", type: "select", options: ["பலவின்பால்", "ஒன்றன்பால்", "பலர்பால்"], ans: "பலவின்பால்" },
+          { id: "t6q7", q: "'புத்தகம்' என்பதைக் குறிக்கும் வேறு சொற்கள் எவை? (பக்கம் 24 & 28)", type: "select", options: ["நூல், பனுவல், ஏடு", "பந்து, பட்டம், மேசை", "கடிகாரம், நேரம்"], ans: "நூல், பனுவல், ஏடு" },
+          { id: "t6q8", q: "புதிர் (பக்கம் 26): 'இடம்விட்டு இடம் செல்லும்; கண்களால் பார்க்க முடியாது; கைகளால் பிடிக்க முடியாது' - அது எது?", type: "select", options: ["காற்று (தென்றல் காற்று)", "வெயில்", "தண்ணீர்"], ans: "காற்று (தென்றல் காற்று)" }
+        ]
+      },
+      {
+        id: 7, category: "fundamental", title: "7. எண் (ஒருமை, பன்மை)",
+        desc: "ஒருமை-பன்மை பிழை நீக்கம், 'ஒளி வீசிய தானியம்' மற்றும் 'வாணியின் கனவு' (பக்கம் 27–30).",
+        passage: "அட! அழகிய கனவு! (பக்கம் 30): தூரிகையை எடுத்தாள் வாணி. மீசை வரைந்தாள்; பூனை வந்தது. வரிகளை வரைந்தாள்; வரிக்குதிரை வந்தது. புள்ளிகளை வரைந்தாள்; சிறுத்தை வந்தது. வெள்ளை வண்ணம் தொட்டாள்; அனைத்தும் மறைந்தன!",
+        questionPool: [
+          { id: "t7q1", q: "பிழை நீக்கி எழுதுக (பக்கம் 27): 'தாள்கள் கிழிந்துவிட்டது.'", type: "select", options: ["தாள்கள் கிழிந்துவிட்டன.", "தாள் கிழிந்துவிட்டன.", "தாள்கள் கிழிந்தான்."], ans: "தாள்கள் கிழிந்துவிட்டன." },
+          { id: "t7q2", q: "பிழை நீக்கி எழுதுக (பக்கம் 27): 'பாட்டியும் தாத்தாவும் சிரித்தது.'", type: "select", options: ["பாட்டியும் தாத்தாவும் சிரித்தார்கள்.", "பாட்டியும் தாத்தாவும் சிரித்தன.", "பாட்டியும் தாத்தாவும் சிரித்தாள்."], ans: "பாட்டியும் தாத்தாவும் சிரித்தார்கள்." },
+          { id: "t7q3", q: "பிழை நீக்கி எழுதுக (பக்கம் 27): 'ஆற்று வெள்ளத்தில் மரங்களும் செடிகளும் மிதந்து சென்றது.'", type: "select", options: ["ஆற்று வெள்ளத்தில் மரங்களும் செடிகளும் மிதந்து சென்றன.", "மரங்களும் செடிகளும் மிதந்து சென்றான்.", "மரங்களும் செடிகளும் மிதந்து சென்றார்கள்."], ans: "ஆற்று வெள்ளத்தில் மரங்களும் செடிகளும் மிதந்து சென்றன." },
+          { id: "t7q4", q: "'குமுதா தொலைக்காட்சி பார்த்துக் கொண்டிருந்தாள். அம்மா காய்கறிகள் வாங்கச் சென்றுள்ளார்.' - இதில் பன்மைச் சொல் எது?", type: "select", options: ["காய்கறிகள்", "தொலைக்காட்சி", "அம்மா"], ans: "காய்கறிகள்" },
+          { id: "t7q5", q: "'ஒளி வீசிய தானியம்' கதையில் சிட்டுக்குருவி கூட்டில் போட்ட மினுமினுக்கும் பொருள் உண்மையில் எது? (பக்கம் 28)", type: "select", options: ["மின்னும் வைரக்கல்", "நெல்மணி", "சிறிய கல்"], ans: "மின்னும் வைரக்கல்" },
+          { id: "t7q6", q: "'உலகம்' என்பதைக் குறிக்கும் சொற்கள் எவை? (பக்கம் 28 & 32)", type: "select", options: ["பார், பூமி, புவி", "உள்ளே, வெளியே, பக்கம்", "சட்டை, கரும்பு"], ans: "பார், பூமி, புவி" },
+          { id: "t7q7", q: "வாணி வரிகளை வரைந்தபோது வரிக்குதிரையும், புள்ளிகளை வரைந்தபோது ______ வந்தது (பக்கம் 30).", type: "select", options: ["சிறுத்தை", "பூனை", "யானை"], ans: "சிறுத்தை" },
+          { id: "t7q8", q: "புதிர் (பக்கம் 30): 'வால் இருக்கும்; வரி இருக்காது. பல் இருக்கும்; புல் தின்னாது. வேகம் இருக்கும்; வீட்டில் இருக்காது' - அது என்ன?", type: "select", options: ["சிறுத்தை", "வரிக்குதிரை", "பூனை"], ans: "சிறுத்தை" }
+        ]
+      },
+      {
+        id: 8, category: "fundamental", title: "8. இடம், காலம்",
+        desc: "மூன்று காலங்கள் (இறந்தகாலம், நிகழ்காலம், எதிர்காலம்) மற்றும் 'பீர்க்கங்கொடி' (பக்கம் 31–34).",
+        passage: "பீர்க்கங்கொடி (பக்கம் 34): பீர்க்கம் விதை முளைத்தது. இலையைத் தின்றன புழுக்கள். காயைத் தின்றன வெட்டுக்கிளிகள். தண்டைக் கடித்தன பூச்சிகள். கோழி வந்தது; புழுக்களைக் கொத்தியது. உண்ணிக்கொக்கு வந்தது; வெட்டுக்கிளிகளைத் தின்றது. குருவி வந்தது; பூச்சிகளை விழுங்கியது. பீர்க்கங்கொடி பிழைத்தது!",
+        questionPool: [
+          { id: "t8q1", q: "'ஆசிரியர் வந்தார் (இறந்தகாலம்) -> வருகிறார் (நிகழ்காலம்) -> ______ (எதிர்காலம்)' (பக்கம் 31)", type: "select", options: ["வருவார்", "வந்தாள்", "வருகின்றன"], ans: "வருவார்" },
+          { id: "t8q2", q: "'நீங்கள் படித்தீர்கள் (இறந்தகாலம்) -> படிக்கிறீர்கள் (நிகழ்காலம்) -> ______ (எதிர்காலம்)'", type: "select", options: ["படிப்பீர்கள்", "படித்தான்", "படிக்கிறேன்"], ans: "படிப்பீர்கள்" },
+          { id: "t8q3", q: "'கார்த்திகா பாடினாள் (இறந்தகாலம்)' - இதற்குரிய நிகழ்காலம் மற்றும் எதிர்காலம் எவை?", type: "select", options: ["பாடுகிறாள், பாடுவாள்", "பாடினான், பாடுவான்", "பாடுகின்றனர், பாடுவர்"], ans: "பாடுகிறாள், பாடுவாள்" },
+          { id: "t8q4", q: "காலப் பிழையை நீக்குக (பக்கம் 32): 'நேற்று மாலை காற்று பலமாக அடிக்கிறது.'", type: "select", options: ["நேற்று மாலை காற்று பலமாக அடித்தது.", "நேற்று மாலை காற்று பலமாக அடிக்கும்.", "நேற்று மாலை காற்று அடிக்கின்றன."], ans: "நேற்று மாலை காற்று பலமாக அடித்தது." },
+          { id: "t8q5", q: "'கடல்' என்பதைக் குறிக்கும் சொற்கள் எவை? (பக்கம் 32 & 36)", type: "select", options: ["ஆழி, பௌவம், பரவை, சமுத்திரம்", "ஆறு, குளம், பரி, புரவி", "மலை, காடு, வயல்"], ans: "ஆழி, பௌவம், பரவை, சமுத்திரம்" },
+          { id: "t8q6", q: "பீர்க்கங்கொடியின் இலையைத் தின்ற புழுக்களை எது கொத்தித் தின்றது? (பக்கம் 34)", type: "select", options: ["கோழி", "உண்ணிக்கொக்கு", "குருவி"], ans: "கோழி" },
+          { id: "t8q7", q: "பீர்க்கங்கொடியின் காயைத் தின்ற வெட்டுக்கிளிகளை எது பிடித்துத் தின்றது? (பக்கம் 34)", type: "select", options: ["உண்ணிக்கொக்கு", "கோழி", "பொன்வண்டு"], ans: "உண்ணிக்கொக்கு" },
+          { id: "t8q8", q: "புதிர் (பக்கம் 34): 'பறந்து செல்லும்; பளபளக்கும். அது எது?'", type: "select", options: ["பொன்வண்டு", "கௌதாரிப் பறவை", "பீர்க்கங்கொடி"], ans: "பொன்வண்டு" }
+        ]
+      },
+      {
+        id: 9, category: "fundamental", title: "9. சுட்டு, வினா",
+        desc: "சுட்டுச் சொற்கள் (அவன், அவள், அது, அந்த) மற்றும் வினாச் சொற்கள் (பக்கம் 35–36).",
+        passage: "பத்தி (பக்கம் 35): கயல் ஒன்பதாம் வகுப்பில் படிக்கிறாள். அவள் ஒருநாள் பள்ளிக்கு வரவில்லை. அன்று அவள் தன் அம்மாவுடன் பல் மருத்துவரைப் பார்க்கச் சென்றாள். அவர் ஓர் உருப்பெருக்கும் கண்ணாடியைக் கொண்டு வந்தார். அது பளபளப்பாக இருந்தது. அந்தப் பல் மிகவும் சேதமடைந்து இருப்பதனால் இனிப்புகள் சாப்பிடுவதைக் குறைக்கச் சொன்னார்.",
+        questionPool: [
+          { id: "t9q1", q: "மேற்கண்ட பத்தியில் இடம்பெற்றுள்ள சுட்டுச் சொற்கள் எவை? (பக்கம் 35)", type: "select", options: ["அவள், அன்று, அவர், அது, அதை, அந்த, அவற்றை", "கயல், அம்மா, பல், கண்ணாடி", "படிக்கிறாள், சென்றாள், வந்தார்"], ans: "அவள், அன்று, அவர், அது, அதை, அந்த, அவற்றை" },
+          { id: "t9q2", q: "தகுந்த வினாச் சொல்லால் நிரப்புக: 'இன்று ______ மாணவர்கள் வருகை புரிந்தனர்?' (பக்கம் 35)", type: "select", options: ["எத்தனை", "எப்பொழுது", "யார்"], ans: "எத்தனை" },
+          { id: "t9q3", q: "தகுந்த வினாச் சொல்லால் நிரப்புக: 'உங்களுக்குப் பிடித்த கதை நூல் ______?' (பக்கம் 35)", type: "select", options: ["எது", "யார்", "எத்தனை"], ans: "எது" },
+          { id: "t9q4", q: "தகுந்த வினாச் சொல்லால் நிரப்புக: 'இந்த அலமாரியில் நூல்களை அடுக்கியது ______?' (பக்கம் 35)", type: "select", options: ["யார்", "எங்கே", "எப்பொழுது"], ans: "யார்" },
+          { id: "t9q5", q: "தகுந்த வினாச் சொல்லால் நிரப்புக: 'மெய்ப்பொருள் என்பதன் பொருள் ______?' (பக்கம் 35)", type: "select", options: ["என்ன", "யார்", "எங்கு"], ans: "என்ன" },
+          { id: "t9q6", q: "'வானம்' என்பதைக் குறிக்கும் சொற்கள் எவை? (பக்கம் 36 & 38)", type: "select", options: ["விசும்பு, ஆகாயம், வான்", "பூமி, விரைவு, பனுவல்", "ஆழி, பரவை, சமுத்திரம்"], ans: "விசும்பு, ஆகாயம், வான்" }
+        ]
+      },
+      {
+        id: 10, category: "fundamental", title: "10. அடைமொழி (பெயரடை, வினையடை)",
+        desc: "பெயரடை மற்றும் வினையடைச் சொற்களை அடையாளம் காணுதல் (பக்கம் 37–38).",
+        passage: "காலைப்பொழுது (பக்கம் 37): இனிமையான காலைப்பொழுதில் கூட்டை விட்டுப் பறவைகள் படபடவெனப் பறந்தன. வண்ணப்பூக்கள் அழகாக மலர்ந்தன. பசுமையான மரங்கள், செடிகள் கண்களை இதமாக வருடின. பலவண்ண வண்ணத்துப்பூச்சி பூக்களில் மென்மையாக அமர்ந்தது.",
+        questionPool: [
+          { id: "t10q1", q: "'இனிமையான காலைப்பொழுது, வண்ணப்பூக்கள், பசுமையான மரங்கள்' - இத்தொடர்களில் உள்ள அடைமொழிகள் எவ்வகை? (பக்கம் 37)", type: "select", options: ["பெயரடை", "வினையடை"], ans: "பெயரடை" },
+          { id: "t10q2", q: "'படபடவெனப் பறந்தன, அழகாக மலர்ந்தன, மென்மையாக அமர்ந்தது' - இத்தொடர்களில் உள்ள அடைமொழிகள் எவ்வகை?", type: "select", options: ["வினையடை", "பெயரடை"], ans: "வினையடை" },
+          { id: "t10q3", q: "புரிந்து படித்ததால் அவள் விடையைச் ______ எழுதினாள். (பக்கம் 37)", type: "select", options: ["சரியாக", "உயர்ந்த", "ஆழமான"], ans: "சரியாக" },
+          { id: "t10q4", q: "______ குழியில் தென்னம்பிள்ளை நட்டார்கள். (பக்கம் 37)", type: "select", options: ["ஆழமான", "வேகமாக", "நன்றாக"], ans: "ஆழமான" },
+          { id: "t10q5", q: "குதிரை ______ ஓடித் தடைகளைத் தாண்டியது. (பக்கம் 37)", type: "select", options: ["வேகமாக", "பெரிய", "குளிர்ந்த"], ans: "வேகமாக" },
+          { id: "t10q6", q: "______ பயிற்சி மூலம், அவன் வெற்றியை அடைந்தான். (பக்கம் 37)", type: "select", options: ["கடினமான", "மெதுவாக", "ஆழமான"], ans: "கடினமான" },
+          { id: "t10q7", q: "'குதிரை' என்பதைக் குறிக்கும் வேறு சொற்கள் எவை? (பக்கம் 38)", type: "select", options: ["பரி, புரவி", "விசும்பு, வான்", "ஆழி, பௌவம்"], ans: "பரி, புரவி" }
+        ]
+      },
+      {
+        id: 11, category: "fundamental", title: "11. தொடரமைப்பு",
+        desc: "எழுவாய், பயனிலை, செயப்படுபொருள் மற்றும் 'பேசாத பெட்டி' கதை (பக்கம் 39–40).",
+        passage: "பேசாத பெட்டி (பக்கம் 40): பள்ளியின் சுவரில் தொங்கிய பழைய கருத்துப் பெட்டியை வனிதா, இரகு, பாஷா, அமலா ஆகியோர் ஆராய்ந்தனர். 2018-இல் மாணவர் அருண் எழுதிய கடிதத்தால் ஏற்பட்ட தவறான விளைவால் பெட்டி மூடப்பட்டிருந்தது. அலமாரியின் பின்பகுதியில் அருண் எழுதிய திறக்கப்படாத மன்னிப்புக் கடிதத்தைக் கண்டுபிடித்து, விருப்ப ஓய்வுபெற்ற ஆசிரியரிடம் கொடுத்தனர். மீண்டும் அப்பெட்டி 'பேசும் பெட்டி' எனப் பெயர் பெற்றுச் செயல்படத் தொடங்கியது.",
+        questionPool: [
+          { id: "t11q1", q: "'கடலாமையாரே, பழங்கள்' - இவை தொடரமைப்பில் எவ்வகைச் சொற்கள்? (பக்கம் 39)", type: "select", options: ["எழுவாய்", "பயனிலை", "செயப்படுபொருள்"], ans: "எழுவாய்" },
+          { id: "t11q2", q: "'வாழ்கின்றன, தின்கின்றன' - இவை தொடரமைப்பில் எவ்வகைச் சொற்கள்? (பக்கம் 39)", type: "select", options: ["பயனிலை", "எழுவாய்", "செயப்படுபொருள்"], ans: "பயனிலை" },
+          { id: "t11q3", q: "'காட்டிற்குள், நிலத்தில்' - இவை தொடரமைப்பில் எவ்வகைச் சொற்கள்? (பக்கம் 39)", type: "select", options: ["செயப்படுபொருள் (இடப்பொருள்)", "பயனிலை", "எழுவாய்"], ans: "செயப்படுபொருள் (இடப்பொருள்)" },
+          { id: "t11q4", q: "பள்ளியின் சுவரில் தொங்கிய பழைய மரப்பெட்டியை மாணவர்கள் முதலில் எவ்வாறு அழைத்தனர்? (பக்கம் 40)", type: "select", options: ["பேசாத பெட்டி", "மந்திரப் பெட்டி", "இரும்புப் பெட்டி"], ans: "பேசாத பெட்டி" },
+          { id: "t11q5", q: "'ஏன் நாம் எழுதியது பதிலின்றிக் கிடக்கிறது?' என்று தன் நண்பர்களிடம் கேட்ட மாணவி யார்?", type: "select", options: ["வனிதா", "கயல்", "குமுதா"], ans: "வனிதா" },
+          { id: "t11q6", q: "புத்தக அலமாரியின் பின்பகுதியில் திறக்கப்படாத நிலையில் யாருடைய மன்னிப்புக் கடிதம் கிடைத்தது?", type: "select", options: ["மாணவர் அருண்", "இரகு", "பாஷா"], ans: "மாணவர் அருண்" },
+          { id: "t11q7", q: "கதையின் முடிவில் அந்த மரப்பெட்டிக்கு என்ன புதிய பெயர் வழங்கப்பட்டது?", type: "select", options: ["பேசும் பெட்டி", "பாடும் பெட்டி", "தங்கப் பெட்டி"], ans: "பேசும் பெட்டி" }
+        ]
+      },
+      {
+        id: 12, category: "fundamental", title: "12. இணைப்புச்சொல்",
+        desc: "இணைப்புச் சொற்கள் (ஆகவே, ஏனெனில், இருந்தாலும்) மற்றும் 'மாணவர் தலைவர் கண்மணி' (பக்கம் 41–42).",
+        passage: "மாணவர் தலைவர் (பக்கம் 42): பள்ளியின் மாணவர் தலைவர் தேர்தலுக்காகக் கண்மணி ஒருவார காலம் பொறுப்பேற்றாள். முதல் நான்கு நாள்கள் சிறப்பாகச் செயல்பட்டாள். ஐந்தாவது நாள் பள்ளி வாயிலில் கண்ணாடி நொறுங்கிக் கிடந்ததால், மாணவர்களின் காலில் குத்திவிடும் என்பதற்காகக் கண்ணாடியைச் சுத்தம் செய்யும்வரை பள்ளி மணியைத் தாமதமாக அடிக்கச் செய்தாள். அவளது பொறுப்புணர்வைப் பாராட்டித் தலைமையாசிரியர் அவளையே மாணவர் தலைவராக அறிவித்தார்.",
+        questionPool: [
+          { id: "t12q1", q: "'நேற்று எங்கள் பள்ளியில் ஆண்டு அறிவியல் கண்காட்சி நடந்தது. ______ விடுப்பு எடுக்காமல் எல்லா மாணவர்களும் பங்கேற்றனர்.' (பக்கம் 41)", type: "select", options: ["ஆகவே", "இருந்தாலும்", "ஆனால்"], ans: "ஆகவே" },
+          { id: "t12q2", q: "'நாங்கள் சூரிய ஆற்றல் மின் உற்பத்தி மாதிரி செய்தோம். ______ அது சுற்றுச்சூழலுக்கு ஏற்ற நல்ல வழி.' (பக்கம் 41)", type: "select", options: ["ஏனெனில்", "இருந்தாலும்", "ஆனால்"], ans: "ஏனெனில்" },
+          { id: "t12q3", q: "'போட்டியில் முதல் பரிசு பெறவில்லை. ______ நாங்கள் மகிழ்ச்சியாக இருந்தோம்.' (பக்கம் 41)", type: "select", options: ["இருந்தாலும்", "ஏனெனில்", "அதற்காக"], ans: "இருந்தாலும்" },
+          { id: "t12q4", q: "'மாணவர் தலைவர்' கதையில் ஒருவார காலம் பொறுப்பெடுத்துச் செயல்பட்ட மாணவி யார்? (பக்கம் 42)", type: "select", options: ["கண்மணி", "வனிதா", "மெர்சி"], ans: "கண்மணி" },
+          { id: "t12q5", q: "ஐந்தாவது நாளன்று கண்மணி ஏன் பள்ளி மணியை உடனே அடிக்க வேண்டாம் என்று கூறினாள்?", type: "select", options: ["பள்ளி வாயிலில் கண்ணாடி நொறுங்கிக் கிடந்ததால் மாணவர்களுக்குக் குத்திவிடும் என்பதால்", "கடிகாரம் பழுதடைந்ததால்", "விளையாடச் சென்றதால்"], ans: "பள்ளி வாயிலில் கண்ணாடி நொறுங்கிக் கிடந்ததால் மாணவர்களுக்குக் குத்திவிடும் என்பதால்" },
+          { id: "t12q6", q: "திங்கள்கிழமை காலைவணக்கக் கூட்டத்தில் தலைமையாசிரியர் கண்மணியை எவ்வாறு பாராட்டினார்?", type: "select", options: ["சரியான நேரத்தில் சரியாகச் செயல்பட்டதே மாணவர் தலைவருக்கு அடையாளம் என்று பாராட்டினார்", "அவளைக் கண்டித்தார்", "மற்றொருவரைத் தேர்ந்தெடுத்தார்"], ans: "சரியான நேரத்தில் சரியாகச் செயல்பட்டதே மாணவர் தலைவருக்கு அடையாளம் என்று பாராட்டினார்" }
+        ]
+      },
+      {
+        id: 13, category: "fundamental", title: "13. இரட்டைச்சொல்",
+        desc: "இரட்டைச் சொற்கள் மற்றும் 'தொழில்நுட்பம் - நம் நண்பராக!' கட்டுரை (பக்கம் 43–44).",
+        passage: "தொழில்நுட்பம் - நம் நண்பராக! (பக்கம் 44): கணினி, அலைபேசி, இணையம், செயற்கை நுண்ணறிவு (AI) போன்றவை கற்றல் துணைக்கருவியாகவும், திறன் மேம்பாட்டிற்கும், மொழித்திறன் வளர்ச்சிக்கும் உதவுகின்றன. தொழில்நுட்பம் ஒரு கூர்மையான கத்தி போன்றது; கால வரையறையுடனும் பெரியவர்கள் அனுமதியுடனும் பாதுகாப்பாகப் பயன்படுத்த வேண்டும்.",
+        questionPool: [
+          { id: "t13q1", q: "குரங்கு மரத்திற்கு மரம் ______ச் சென்றது. (பக்கம் 43)", type: "select", options: ["தாவித்தாவி", "சடசடவென", "மடமடவென"], ans: "தாவித்தாவி" },
+          { id: "t13q2", q: "நகைச்சுவையைக் கேட்டுக் ______வெனச் சிரித்தனர். (பக்கம் 43)", type: "select", options: ["கலகல", "சடசட", "படபட"], ans: "கலகல" },
+          { id: "t13q3", q: "பறவைகள் ______வெனச் சிறகடித்துப் பறந்தன. (பக்கம் 43)", type: "select", options: ["படபட", "கலகல", "குடுகுடு"], ans: "படபட" },
+          { id: "t13q4", q: "மழை ______வெனப் பெய்தது. (பக்கம் 43)", type: "select", options: ["சடசட", "தாவித்தாவி", "கலகல"], ans: "சடசட" },
+          { id: "t13q5", q: "மான் காட்டில் ______ ஓடியது. (பக்கம் 43)", type: "select", options: ["துள்ளித்துள்ளி", "மடமடவென", "சடசடவென"], ans: "துள்ளித்துள்ளி" },
+          { id: "t13q6", q: "'தொழில்நுட்பம் - நம் நண்பராக!' கட்டுரையில் தொழில்நுட்பம் எதற்கு உவமையாகக் கூறப்பட்டுள்ளது? (பக்கம் 44)", type: "select", options: ["கூர்மையான கத்தி போன்றது", "கடல் போன்றது", "மலை போன்றது"], ans: "கூர்மையான கத்தி போன்றது" },
+          { id: "t13q7", q: "இணையவழியில் செயல்படும்போது மாணவர்கள் கடைப்பிடிக்க வேண்டிய முக்கிய நெறி எது? (பக்கம் 44)", type: "select", options: ["கால வரையறையுடனும் பெரியவர்கள் அனுமதியுடனும் பயன்படுத்த வேண்டும்", "நாள் முழுவதும் சமூக ஊடகங்களில் நேரத்தைச் செலவிடலாம்", "அனைத்துத் தனிப்பட்ட தகவல்களையும் பதிவிடலாம்"], ans: "கால வரையறையுடனும் பெரியவர்கள் அனுமதியுடனும் பயன்படுத்த வேண்டும்" }
+        ]
+      },
+      {
+        id: 14, category: "fundamental", title: "14. இணைமொழி",
+        desc: "இணைமொழிகள் (ஓங்கி உயர்ந்து, வளைந்து நெளிந்து, பச்சைப் பசேலென) மற்றும் உரையாடல் (பக்கம் 45–46).",
+        passage: "எங்கே போகலாம்? (பக்கம் 46): ராஜா விடுமுறைக்குத் தேனி அருகே உள்ள பாட்டி ஊருக்குச் சென்றான். ஆற்றங்கரை மணலில் விளையாடினான்; மழையில் நனைந்தபோது பாட்டி சூடாகச் சுக்கு நீர் கொடுத்தார். அனு கொடைக்கானலுக்குச் சென்று மலை, பூங்கா, ஏரி, குகை மற்றும் குளுகுளுவென்று விழும் அருவியைப் பார்த்தாள்.",
+        questionPool: [
+          { id: "t14q1", q: "சாலைகளின் இருபுறமும் பனை மரங்கள் ______ வளர்ந்திருந்தன. (பக்கம் 45)", type: "select", options: ["ஓங்கி உயர்ந்து", "மேடுபள்ளம்", "வளைந்து நெளிந்து"], ans: "ஓங்கி உயர்ந்து" },
+          { id: "t14q2", q: "ஏற்காட்டிற்குச் செல்லும் மலைப்பாதை ______ செல்லும். (பக்கம் 45)", type: "select", options: ["வளைந்து நெளிந்து", "பச்சைப் பசேலென", "ஓங்கி உயர்ந்து"], ans: "வளைந்து நெளிந்து" },
+          { id: "t14q3", q: "எங்கள் கிராமத்தில் எங்கே பார்த்தாலும் ______ வயல்வெளிகள் உள்ளன. (பக்கம் 45)", type: "select", options: ["பச்சைப் பசேலென", "மேடுபள்ளம்", "வளைந்து நெளிந்து"], ans: "பச்சைப் பசேலென" },
+          { id: "t14q4", q: "மழை பெய்ததால் சாலைகளில் ______ உள்ளன. (பக்கம் 45)", type: "select", options: ["மேடுபள்ளம்", "பச்சைப் பசேலென", "ஓங்கி உயர்ந்து"], ans: "மேடுபள்ளம்" },
+          { id: "t14q5", q: "ராஜா விடுமுறைக்குத் தேனி அருகே உள்ள யாருடைய ஊருக்குச் சென்றான்? (பக்கம் 46)", type: "select", options: ["பாட்டி ஊருக்கு", "மாமா ஊருக்கு", "நண்பன் ஊருக்கு"], ans: "பாட்டி ஊருக்கு" },
+          { id: "t14q6", q: "ராஜா மழையில் நனைந்தபோது பாட்டி மாலையில் சூடாக என்ன குடிக்கக் கொடுத்தார்? (பக்கம் 46)", type: "select", options: ["சுக்கு நீர்", "இளநீர்", "மோர்ப் பானம்"], ans: "சுக்கு நீர்" },
+          { id: "t14q7", q: "அனு விடுமுறைக்கு எந்த மலை வாழிடத்திற்குச் சென்றாள்? (பக்கம் 46)", type: "select", options: ["கொடைக்கானல்", "உதகமண்டலம்", "ஏற்காடு"], ans: "கொடைக்கானல்" }
+        ]
+      },
+      {
+        id: 15, category: "fundamental", title: "15. மயங்கொலி",
+        desc: "மயங்கொலிப் பிழை நீக்கம் (ல-ள-ழ, ன-ண, ர-ற) மற்றும் 'எது சிறந்தது?' கதை (பக்கம் 47–49).",
+        passage: "எது சிறந்தது? (பக்கம் 49): பள்ளியின் சிறந்த மாணவர்களாக இரவி, மெர்சி, முபாரக் ஆகிய மூவரும் தேர்ந்தெடுக்கப்பட்டனர். இரவி கலை, படிப்பு, விளையாட்டுத் திறமைகளுக்காகவும்; முபாரக் நேர்மறை சிந்தனை மற்றும் 'நான் முயற்சி செய்கிறேன்' என்ற வளர்ச்சி மனப்பாங்கிற்காகவும்; மெர்சி இடைநின்ற இரு மாணவர்களை மீண்டும் பள்ளிக்கு வரவழைத்த நற்செயலுக்காகவும் தேர்ந்தெடுக்கப்பட்டனர்.",
+        questionPool: [
+          { id: "t15q1", q: "உரிய மயங்கொலிச் சொல்லைத் தேர்ந்தெடுக்க (பக்கம் 47): '______ (தனி / தணி) மரம் தோப்பாகாது.'", type: "select", options: ["தனி", "தணி"], ans: "தனி" },
+          { id: "t15q2", q: "உரிய சொல்லைத் தேர்ந்தெடுக்க (பக்கம் 47): 'ஆற்றங்______ (கறையில் / கரையில்) மரங்கள் உண்டு.'", type: "select", options: ["கரையில்", "கறையில்"], ans: "கரையில்" },
+          { id: "t15q3", q: "உரிய சொல்லைத் தேர்ந்தெடுக்க: 'தமிழ்நாடு பாடநூல் மற்றும் கல்வியியல் பணிகள் ______ (கலகம் / கழகம்).'", type: "select", options: ["கழகம்", "கலகம்"], ans: "கழகம்" },
+          { id: "t15q4", q: "உரிய சொல்லைத் தேர்ந்தெடுக்க: 'பிறரைப் ______ (பழி / பலி) சொல்லக்கூடாது.'", type: "select", options: ["பழி", "பலி"], ans: "பழி" },
+          { id: "t15q5", q: "உரிய சொல்லைத் தேர்ந்தெடுக்க: 'வாத்தின் ______ (அலகு / அளகு) தட்டையாயிருக்கும்.'", type: "select", options: ["அலகு", "அளகு"], ans: "அலகு" },
+          { id: "t15q6", q: "'எது சிறந்தது?' கதையில் இடைநின்ற இரு மாணவர்களை மீண்டும் பள்ளிக்கு வரவழைத்துச் சிறந்த மாணவர் விருது பெற்றவர் யார்? (பக்கம் 49)", type: "select", options: ["மெர்சி", "இரவி", "முபாரக்"], ans: "மெர்சி" },
+          { id: "t15q7", q: "குறைவான மதிப்பெண் பெற்றிருந்தாலும், நேர்மறை சிந்தனை மற்றும் வளர்ச்சி மனப்பாங்கிற்காக விருது பெற்ற மாணவர் யார்?", type: "select", options: ["முபாரக்", "இரவி", "மெர்சி"], ans: "முபாரக்" },
+          { id: "t15q8", q: "கதையின் முடிவில் இரவி தன் மனத்திற்குள் என்ன உறுதி எடுத்துக்கொண்டான்?", type: "select", options: ["இனிமேல் திறமையில் மட்டுமல்ல பண்பிலும் சிறந்து விளங்குவேன் என எண்ணினான்", "போட்டிகளில் பங்கேற்க மாட்டேன் என எண்ணினான்", "பள்ளியை மாற்ற வேண்டும் என எண்ணினான்"], ans: "இனிமேல் திறமையில் மட்டுமல்ல பண்பிலும் சிறந்து விளங்குவேன் என எண்ணினான்" }
+        ]
+      },
+
+      // ---------------- பகுதி 2: வகுப்புநிலைத் திறன்கள் (பக்கம் 50–73) ----------------
+      {
+        id: 16, category: "grade", title: "வ1. அகராதியில் பொருளறிதல்",
+        desc: "திருக்குறள் மற்றும் மூதுரைப் பாடலின் சொற்பொருள் அறிதல் (பக்கம் 53).",
+        passage: "திருக்குறள் (பக்கம் 53):\nஅன்புநாண் ஒப்புரவு கண்ணோட்டம் வாய்மையொடு\nஐந்துசால்பு ஊன்றிய தூண்.\n\nமூதுரைப் பாடல் (பக்கம் 53):\nநெல்லுக்கு இறைத்தநீர் வாய்க்கால் வழியோடிப்\nபுல்லுக்கும் ஆங்கே பொசியுமாம் - தொல்லுலகில்\nநல்லார் ஒருவர் உளரேல் அவர்பொருட்டு\nஎல்லார்க்கும் பெய்யும் மழை.",
+        questionPool: [
+          { id: "t16q1", q: "திருக்குறளில் சான்றாண்மை (சால்பு) என்னும் மாளிகையைத் தாங்கும் ஐந்து தூண்களாகக் கூறப்படுபவை எவை? (பக்கம் 53)", type: "select", options: ["அன்பு, நாண், ஒப்புரவு, கண்ணோட்டம், வாய்மை", "கல்வி, செல்வம், வீரம், புகழ், அழகு", "நிலம், நீர், தீ, வளி, விசும்பு"], ans: "அன்பு, நாண், ஒப்புரவு, கண்ணோட்டம், வாய்மை" },
+          { id: "t16q2", q: "திருக்குறளில் உள்ள 'நாண்' என்ற சொல்லின் பொருள் என்ன? (பக்கம் 53)", type: "select", options: ["பழிக்கு நாணுதல் (தீமை செய்ய அஞ்சுதல்)", "கயிறு கட்டுதல்", "சினம் கொள்ளுதல்"], ans: "பழிக்கு நாணுதல் (தீமை செய்ய அஞ்சுதல்)" },
+          { id: "t16q3", q: "திருக்குறளில் உள்ள 'ஒப்புரவு' மற்றும் 'கண்ணோட்டம்' ஆகிய சொற்களின் பொருள் என்ன?", type: "select", options: ["உலக நடையறிந்து உதவுதல் மற்றும் இரக்கம் (தாட்சண்யம்)", "பகைமை மற்றும் பொறாமை", "சோம்பல் மற்றும் மறதி"], ans: "உலக நடையறிந்து உதவுதல் மற்றும் இரக்கம் (தாட்சண்யம்)" },
+          { id: "t16q4", q: "'நெல்லுக்கு இறைத்தநீர்... புல்லுக்கும் ஆங்கே பொசியுமாம்' - இதில் 'பொசியுமாம்' என்பதன் பொருள் என்ன? (பக்கம் 53)", type: "select", options: ["கசிந்து பாயும்", "வற்றிப் போகும்", "தீர்ந்து போகும்"], ans: "கசிந்து பாயும்" },
+          { id: "t16q5", q: "'நல்லார் ஒருவர் உளரேல் அவர்பொருட்டு எல்லார்க்கும் பெய்யும் மழை' - இதில் 'உளரேல்' என்பதன் பொருள் என்ன?", type: "select", options: ["இருப்பாரானால்", "சென்றால்", "மறைந்தால்"], ans: "இருப்பாரானால்" },
+          { id: "t16q6", q: "மூதுரைப் பாடலின் மையக்கருத்து என்ன? (பக்கம் 53)", type: "select", options: ["நல்லவர் ஒருவர் இருந்தால் அவர் பொருட்டு உலகில் உள்ள அனைவருக்கும் மழை பொழியும்", "நெல்லுக்கு மட்டும் நீர் பாய்ச்ச வேண்டும்", "புல்லுக்கு நீர் பாய்ச்சக் கூடாது"], ans: "நல்லவர் ஒருவர் இருந்தால் அவர் பொருட்டு உலகில் உள்ள அனைவருக்கும் மழை பொழியும்" }
+        ]
+      },
+      {
+        id: 17, category: "grade", title: "வ2. பொருளுணர்ந்து படித்தல்",
+        desc: "சொற்பிரிப்புக்கு ஏற்பப் பொருள் வேறுபடுதல் மற்றும் மனிதநேயப் பத்தி (பக்கம் 54).",
+        passage: "மனிதநேயம் (பக்கம் 54): மனிதநேயம் என்ற சொல்லுக்கு மனிதர்கள் மற்ற மனிதர்களிடம் காட்டும் அன்பு என்று பொருள். இதில் உயிரிரக்கப்பண்பு இன்றியமையாத இடம்பெறுகிறது. அன்பே மகிழ்ச்சியின் ஊற்றாகும். 'வாடிய பயிரைக் கண்டபோதெல்லாம் வாடினேன்' என்ற வள்ளலாரின் உயிரிரக்கப்பண்பு போற்றுவதற்கு உரியது.",
+        questionPool: [
+          { id: "t17q1", q: "'பலகைகள் உடைந்து பேரதிர்ச்சி தந்ததல்லவா?' vs 'பல கைகள் உடைந்து பேரதிர்ச்சி தந்ததல்லவா?' - இவற்றின் பொருள் வேறுபாடு என்ன? (பக்கம் 54)", type: "select", options: ["மரப் பலகைகள் உடைந்தன / பல மனிதக் கைகள் உடைந்தன", "இரண்டும் ஒரே பொருள் தரும்", "கடிகார முட்கள் உடைந்தன"], ans: "மரப் பலகைகள் உடைந்தன / பல மனிதக் கைகள் உடைந்தன" },
+          { id: "t17q2", q: "'அந்த மான் பார்க்க எப்பொழுது செல்வோம்?' vs 'அந்தமான் பார்க்க எப்பொழுது செல்வோம்?' - இவற்றின் பொருள் வேறுபாடு என்ன?", type: "select", options: ["காட்டில் உள்ள மான் விலங்கு / அந்தமான் தீவு", "இரண்டும் விலங்கைக் குறிக்கும்", "இரண்டும் ஊரைக் குறிக்கும்"], ans: "காட்டில் உள்ள மான் விலங்கு / அந்தமான் தீவு" },
+          { id: "t17q3", q: "'மனிதநேயம்' என்ற சொல்லின் பொருள் என்ன? (பக்கம் 54)", type: "select", options: ["மனிதர்கள் மற்ற மனிதர்களிடம் காட்டும் அன்பு", "பணம் சேர்த்தல்", "போட்டி போடுதல்"], ans: "மனிதர்கள் மற்ற மனிதர்களிடம் காட்டும் அன்பு" },
+          { id: "t17q4", q: "'வாடிய பயிரைக் கண்டபோதெல்லாம் வாடினேன்' என்று உயிரிரக்கப் பண்பைப் போற்றியவர் யார்? (பக்கம் 54)", type: "select", options: ["வள்ளலார் (இராமலிங்க அடிகளார்)", "பாரதிதாசன்", "நாமக்கல் கவிஞர்"], ans: "வள்ளலார் (இராமலிங்க அடிகளார்)" },
+          { id: "t17q5", q: "மனித மனங்களில் உள்ள மாசுகளை நீக்கும் மகிழ்ச்சியின் ஊற்று எது? (பக்கம் 54)", type: "select", options: ["அன்பு", "சினம்", "அச்சம்"], ans: "அன்பு" }
+        ]
+      },
+      {
+        id: 18, category: "grade", title: "வ3. நிறுத்தக்குறிகள்",
+        desc: "உணர்ச்சிக்குறி, வினாக்குறி, காற்புள்ளி, அரைப்புள்ளி மற்றும் முற்றுப்புள்ளி (பக்கம் 55–56 & 61).",
+        passage: "பத்தி (பக்கம் 55): நண்பா! நண்பா! எங்கே இருக்கிறாய்? என் ஆருயிர் நண்பா! இங்கேயா இருக்கிறாய்? ஐயோ! கத்துவதற்குக்கூட வழியில்லாமல் இப்படிக் கம்பிவேலியில் சிக்கிக்கொண்டாயே! விவசாயி அருகில் வரும்போது நீ இறந்துவிட்டது போல் நடி; அசையாமல் இரு. நீ, நான், நமது நண்பர்கள் அனைவரும் காட்டிற்குள் சென்றுவிடலாம்.",
+        questionPool: [
+          { id: "t18q1", q: "'நண்பா! நண்பா!' மற்றும் 'ஐயோ!' ஆகிய சொற்களில் இடம்பெற்றுள்ள நிறுத்தக்குறி எது? (பக்கம் 55)", type: "select", options: ["உணர்ச்சிக்குறி (!)", "வினாக்குறி (?)", "அரைப்புள்ளி (;)"], ans: "உணர்ச்சிக்குறி (!)" },
+          { id: "t18q2", q: "'எங்கே இருக்கிறாய்?' மற்றும் 'இங்கேயா இருக்கிறாய்?' ஆகிய தொடர்களில் உள்ள நிறுத்தக்குறி எது?", type: "select", options: ["வினாக்குறி (?)", "காற்புள்ளி (,)", "முற்றுப்புள்ளி (.)"], ans: "வினாக்குறி (?)" },
+          { id: "t18q3", q: "'நீ, நான், நமது நண்பர்கள்' - சொற்களைப் பிரித்துக் காட்டப் பயன்படும் நிறுத்தக்குறி எது? (பக்கம் 55)", type: "select", options: ["காற்புள்ளி (,)", "வினாக்குறி (?)", "உணர்ச்சிக்குறி (!)"], ans: "காற்புள்ளி (,)" },
+          { id: "t18q4", q: "'நீ இறந்துவிட்டது போல் நடி; அசையாமல் இரு.' - இதில் 'நடி' என்பதற்குப் பின் உள்ள நிறுத்தக்குறி எது?", type: "select", options: ["அரைப்புள்ளி (;)", "முக்கால்புள்ளி (:)", "வினாக்குறி (?)"], ans: "அரைப்புள்ளி (;)" },
+          { id: "t18q5", q: "மதிப்பீடு-1 வினா (பக்கம் 61): ( , \" \" ? ! . ) ஆகிய நிறுத்தக்குறிகள் அனைத்தும் பொருந்தும் தொடர் எது?", type: "select", options: ["\"நீ மட்டும் என்ன? நீயும்தான் அருமையாகப் பேசிவிட்டாயே!\" என்றான்.", "அடப்பாவி பேசி விட்டாயே என்றான்", "அவர்களின் மௌன விரதம் முடிந்து போனது"], ans: "\"நீ மட்டும் என்ன? நீயும்தான் அருமையாகப் பேசிவிட்டாயே!\" என்றான்." },
+          { id: "t18q6", q: "மதிப்பீடு-1 வினா (பக்கம் 61): நிறுத்தக்குறிகள் இடவேண்டிய தொடர் எது?", type: "select", options: ["திருவள்ளுவர் ஔவையார் பாரதியார் பாரதிதாசன் போன்றவர்கள் தமிழ் புலவர்கள்", "சேர மன்னர்களில் புகழ்பெற்ற மன்னர் யார்?", "'மின்னுவதெல்லாம் பொன்னல்ல' என்பது பழமொழி."], ans: "திருவள்ளுவர் ஔவையார் பாரதியார் பாரதிதாசன் போன்றவர்கள் தமிழ் புலவர்கள்" }
+        ]
+      },
+      {
+        id: 19, category: "grade", title: "வ4. உரையாடல் அமைத்தல்",
+        desc: "நகம் - விரல் உரையாடல் மற்றும் விண்வெளி வீரருடன் ஒரு நாள் (பக்கம் 57–58).",
+        passage: "நகம் - விரல் உரையாடல் (பக்கம் 57): விரல் சோகமாக இருந்தது. ஏனெனில், நகம் நீளமாக வளர்வதால், நேற்று ஒரு தாய் தன் மகனிடம் 'உன்னுடைய நகத்தை ஒழுங்காக வெட்டாமல் விட்டுவிட்டால் விரலையே வெட்டி விடுவேன்' என்று கூறிக் கண்டித்தார்!",
+        questionPool: [
+          { id: "t19q1", q: "'நகம் - விரல்' உரையாடலில் விரலின் சோகத்திற்குக் காரணமாகக் கூறப்படுவது எது? (பக்கம் 57)", type: "select", options: ["வளர்வது நகம்; ஆனால் தாய் விரலை வெட்டிவிடுவேன் என்று கண்டித்தது", "விரலில் மோதிரம் அணியாதது", "நகம் வண்ணம் பூசாதது"], ans: "வளர்வது நகம்; ஆனால் தாய் விரலை வெட்டிவிடுவேன் என்று கண்டித்தது" },
+          { id: "t19q2", q: "உடல் தூய்மைக்காக நாம் நகங்களை எவ்வாறு பராமரிக்க வேண்டும்? (பக்கம் 57)", type: "select", options: ["நகங்களில் அழுக்குச் சேராமல் வாரந்தோறும் சீராக வெட்டித் தூய்மையாகப் பராமரிக்க வேண்டும்", "நகங்களை நீளமாக வளர்த்து அழுக்குச் சேர்க்க வேண்டும்", "நகங்களைப் பல்லால் கடிக்க வேண்டும்"], ans: "நகங்களில் அழுக்குச் சேராமல் வாரந்தோறும் சீராக வெட்டித் தூய்மையாகப் பராமரிக்க வேண்டும்" },
+          { id: "t19q3", q: "'விண்வெளி வீரருடன் ஒரு நாள்' உரையாடலில் விண்வெளியில் வீரர்கள் மிதப்பதற்குக் காரணம் என்ன? (பக்கம் 58)", type: "select", options: ["புவியீர்ப்பு விசை இல்லாமை (Zero gravity)", "காற்று அதிகமாக வீசுவதால்", "கனமான காலணி அணிவதால்"], ans: "புவியீர்ப்பு விசை இல்லாமை (Zero gravity)" },
+          { id: "t19q4", q: "விண்வெளி வீரருடன் நேர்காணல் நடத்தும்போது கேட்கப் பொருத்தமான வினா எது? (பக்கம் 58)", type: "select", options: ["விண்வெளியில் புவியீர்ப்பு விசை இல்லாத சூழலில் எவ்வாறு உணவு உட்கொள்வீர்கள்?", "பேருந்து நிலையம் எங்கே உள்ளது?", "மளிகைக் கடையில் அரிசி விலை என்ன?"], ans: "விண்வெளியில் புவியீர்ப்பு விசை இல்லாத சூழலில் எவ்வாறு உணவு உட்கொள்வீர்கள்?" },
+          { id: "t19q5", q: "விண்வெளிப் பயணத்தின் முக்கிய நோக்கம் என்ன? (பக்கம் 58)", type: "select", options: ["கோள்கள், விண்வெளி ஆய்வு மற்றும் அறிவியல் கண்டுபிடிப்புகள்", "சுற்றுலா சென்று விளையாடுதல்", "மீன் பிடித்தல்"], ans: "கோள்கள், விண்வெளி ஆய்வு மற்றும் அறிவியல் கண்டுபிடிப்புகள்" }
+        ]
+      },
+      {
+        id: 20, category: "grade", title: "வ5. படித்து விடையளித்தல் & மதிப்பீடு - 1",
+        desc: "பேராசிரியர் நாட்குறிப்பு, தஞ்சாவூர் புத்தகத் திருவிழா மற்றும் மதிப்பீடு-1 வினாக்கள் (பக்கம் 59–62).",
+        passage: "1. பேராசிரியர் நாட்குறிப்பு (பக்கம் 59): மொழி என்பது மூச்செனக் கொள்ளப்பட வேண்டியது. தண்ணீர் பாயப்பாயக் கூழாங்கல் வழவழப்பாவது போல் மாறினேன். ஓர் அறையின் நூற்றாண்டு இருளைப் போக்கிடும் விளக்குபோல அவர் திகழ்ந்தார்.\n\n2. புத்தகத் திருவிழா (பக்கம் 60): நாள்: 2025 செப்டம்பர் 19 முதல் 28 வரை (10 நாள்கள்). இடம்: சரஸ்வதி மகால் நூலகம், தஞ்சாவூர். நேரம்: காலை 8.00 முதல் மாலை 6.00 வரை. 10-க்கும் மேற்பட்ட நூல்களை வாங்கும் மாணவர்களுக்கு ரூ.200 மதிப்புள்ள நூல் இலவசம்.",
+        questionPool: [
+          { id: "t20q1", q: "'ஓர் அறையின் நூற்றாண்டு இருளைப் போக்கிடும் விளக்கு போல' என்ற தொடர் உணர்த்துவது எது? (பக்கம் 59)", type: "select", options: ["வாழ்க்கையின் அறியாமை இருளைப் போக்க உதவினார்", "அறையில் உள்ள இருளை விலக்கினார்", "அறையில் வெளிச்சத்தைப் பரப்பினார்"], ans: "வாழ்க்கையின் அறியாமை இருளைப் போக்க உதவினார்" },
+          { id: "t20q2", q: "மாணவருக்குள் நடைபெற்ற மாற்றத்திற்கு உவமையாகக் காட்டப்படுவது எது? (பக்கம் 59)", type: "select", options: ["தண்ணீர் பாயப்பாயக் கூழாங்கல் வழவழப்பாவது போல் மாறியது", "மரம் வளர்வது போல் மாறியது", "கடல் அலை போல் மாறியது"], ans: "தண்ணீர் பாயப்பாயக் கூழாங்கல் வழவழப்பாவது போல் மாறியது" },
+          { id: "t20q3", q: "பத்தியில் இடம்பெற்றுள்ள அடுக்குத்தொடர்கள் எவை? (பக்கம் 59)", type: "select", options: ["திறக்கத்திறக்க, பாயப்பாய, நினைக்க நினைக்க", "விருப்பு வெறுப்பு", "கூழாங்கல் வழவழப்பு"], ans: "திறக்கத்திறக்க, பாயப்பாய, நினைக்க நினைக்க" },
+          { id: "t20q4", q: "தஞ்சாவூர் புத்தகத் திருவிழா விளம்பரத்திற்குப் பொருந்தாத தொடர் எது? (பக்கம் 60)", type: "select", options: ["பள்ளி, கல்லூரி மாணவர்களின் கலைநிகழ்ச்சிகள் நடைபெறுகின்றன", "தொடக்கநாளில் கல்வி அமைச்சர் கலந்து கொள்கிறார்", "நாள்தோறும் புதிய புத்தகங்கள் வெளியீடு இடம்பெறுகிறது"], ans: "பள்ளி, கல்லூரி மாணவர்களின் கலைநிகழ்ச்சிகள் நடைபெறுகின்றன" },
+          { id: "t20q5", q: "புத்தகத் திருவிழா செப்டம்பர் 19 முதல் 28 வரை மொத்தம் எத்தனை நாள்கள் நடைபெறுகிறது? (பக்கம் 60)", type: "select", options: ["10 நாள்கள்", "5 நாள்கள்", "30 நாள்கள்"], ans: "10 நாள்கள்" },
+          { id: "t20q6", q: "அறிவன் மாலை 6.30 மணிக்குப் புத்தகத் திருவிழாவிற்குச் சென்றால் என்ன நடக்கும்? (நேரம்: காலை 8 முதல் மாலை 6 வரை)", type: "select", options: ["மாலை 6.00 மணியுடன் திருவிழா முடிவடைவதால் அவனால் நூல்கள் வாங்க முடியாது", "நூறு நூல்கள் வாங்குவான்", "பரிசு பெறுவான்"], ans: "மாலை 6.00 மணியுடன் திருவிழா முடிவடைவதால் அவனால் நூல்கள் வாங்க முடியாது" },
+          { id: "t20q7", q: "மதிப்பீடு-1 (பக்கம் 61): 'நாளங்காடி, அல்லங்காடி' - இச்சொற்களின் பொருள் உணர்த்தும் தொடர் எது?", type: "select", options: ["பகலிலும் (நாளங்காடி) இரவிலும் (அல்லங்காடி) செயல்படும் கடைகள்", "இரவில் மட்டும் செயல்படும் கடைகள்", "காலையில் மட்டும் செயல்படும் கடைகள்"], ans: "பகலிலும் (நாளங்காடி) இரவிலும் (அல்லங்காடி) செயல்படும் கடைகள்" },
+          { id: "t20q8", q: "மதிப்பீடு-1 (பக்கம் 61): எழுத்துகளை முறைப்படுத்தினால் கிடைக்கும் சொற்கள்: (க ச் வ ப் ஞ் பு சி ழ் ச), (ன் ப மொ ப் ல மை பு ழி)", type: "select", options: ["வஞ்சப்புகழ்ச்சி, பன்மொழிப் புலமை", "வஞ்சமொழி, மொழிப்புலமை", "புகழ்ச்சி, பன்மொழி"], ans: "வஞ்சப்புகழ்ச்சி, பன்மொழிப் புலமை" }
+        ]
+      },
+      {
+        id: 21, category: "grade", title: "வ6. வினா உருவாக்குதல்",
+        desc: "விடைக்கேற்ற வினா உருவாக்குதல் மற்றும் வினாச் சொற்கள் (பக்கம் 62–63).",
+        questionPool: [
+          { id: "t21q1", q: "விடை: 'ஆகஸ்டு-12 உலக யானைகள் தினம் கொண்டாடப்படுகிறது.' - இதற்கான வினா எது? (பக்கம் 63)", type: "select", options: ["உலக யானைகள் தினம் எப்போது கொண்டாடப்படுகிறது?", "யானைகள் எங்கு வாழ்கின்றன?", "யானைக்குப் பிடித்த உணவு எது?"], ans: "உலக யானைகள் தினம் எப்போது கொண்டாடப்படுகிறது?" },
+          { id: "t21q2", q: "விடை: '\"யாமறிந்த மொழிகளிலே தமிழ்மொழிபோல் இனிதாவது எங்கும் காணோம்\" என்று பாடியவர் பாரதியார்.' - வினா எது?", type: "select", options: ["\"யாமறிந்த மொழிகளிலே தமிழ்மொழிபோல் இனிதாவது எங்கும் காணோம்\" என்று பாடியவர் யார்?", "பாரதியார் எங்கு பிறந்தார்?", "தமிழ்மொழியின் சிறப்பு என்ன?"], ans: "\"யாமறிந்த மொழிகளிலே தமிழ்மொழிபோல் இனிதாவது எங்கும் காணோம்\" என்று பாடியவர் யார்?" },
+          { id: "t21q3", q: "விடை: 'குடைவரைக் கோயில்கள் தொடங்கி, தனித்தனிக் கற்சிற்பங்கள் வரை காணப்படுவது மாமல்லபுரத்தின் சிறப்பு.' - வினா எது?", type: "select", options: ["மாமல்லபுரத்தின் சிறப்பு என்ன?", "மாமல்லபுரம் எந்த மாவட்டத்தில் உள்ளது?", "குடைவரைக் கோயிலைக் கட்டியவர் யார்?"], ans: "மாமல்லபுரத்தின் சிறப்பு என்ன?" },
+          { id: "t21q4", q: "விடை: 'தமிழ்நாட்டின் நெற்களஞ்சியம் தஞ்சாவூர்.' - இதற்கான வினா எது? (பக்கம் 63)", type: "select", options: ["தமிழ்நாட்டின் நெற்களஞ்சியம் எது?", "தஞ்சாவூரில் உள்ள நூலகம் எது?", "நெல் எங்கு விளையும்?"], ans: "தமிழ்நாட்டின் நெற்களஞ்சியம் எது?" },
+          { id: "t21q5", q: "விடை: 'இந்திய ஏவுகணை நாயகன் கலாம்.' - மலரின் விடைக்குச் சுடரின் வினா என்ன? (பக்கம் 62)", type: "select", options: ["இந்திய ஏவுகணை நாயகன் யார்?", "ஏவுகணை நாயகன் கலாம் எந்த ஊர்?", "ஏவுகணை என்றால் என்ன?"], ans: "இந்திய ஏவுகணை நாயகன் யார்?" },
+          { id: "t21q6", q: "மதிப்பீடு-1 (பக்கம் 62): 'மதுரை ______ கோயில்கள் நிறைந்த அழகிய சுற்றுலாத்தலம். எனவே மதுரை ______ தூங்கா நகரம் எனவும் அழைக்கப்படுகிறது.'", type: "select", options: ["மாநகர்", "மலை", "பெரிய"], ans: "மாநகர்" }
+        ]
+      },
+      {
+        id: 22, category: "grade", title: "வ7. வடிவம் மாற்றி எழுதுதல்",
+        desc: "தமிழர் மருத்துவம் குறிப்புகள் மற்றும் வனவிலங்கு வாரவிழா அறிக்கை (பக்கம் 64–65).",
+        passage: "1. தமிழர் மருத்துவம் (பக்கம் 64): தாவரங்களின் வேர், பட்டை, இலை, பூ, காய், கனி பயன்பாடு. பக்க விளைவுகள் இல்லை. சுற்றுச்சூழலைச் சிதைக்காது. நோயில்லா மனிதர் ஆக்குதல்.\n\n2. வனவிலங்கு வாரவிழா அறிக்கை (பக்கம் 65): இடம்: அரசு உயர்நிலைப்பள்ளி. நாள்: 04.10.2025. தலைமை: அ.பெரியசாமி (பெற்றோர் ஆசிரியர் கழகத் தலைவர்). சிறப்பு விருந்தினர்: திரு.கலைச்செல்வன் (வனவிலங்கு ஆர்வலர்).",
+        questionPool: [
+          { id: "t22q1", q: "தொடக்க காலத் தமிழர்கள் நோய்க்கான மருந்தாகத் தாவரங்களின் எப்பகுதிகளைப் பயன்படுத்தினர்? (பக்கம் 64)", type: "select", options: ["வேர், பட்டை, இலை, பூ, காய், கனி", "இரசாயன மாத்திரைகள்", "நெகிழிப் பொருள்கள்"], ans: "வேர், பட்டை, இலை, பூ, காய், கனி" },
+          { id: "t22q2", q: "தமிழர் மருத்துவத்தின் மிக முக்கியச் சிறப்பு எது? (பக்கம் 64)", type: "select", options: ["பக்க விளைவுகள் இல்லை மற்றும் சுற்றுச்சூழலைச் சிதைக்காது", "அதிகப் பக்க விளைவுகள் கொண்டது", "சுற்றுச்சூழலை மாசுபடுத்தும்"], ans: "பக்க விளைவுகள் இல்லை மற்றும் சுற்றுச்சூழலைச் சிதைக்காது" },
+          { id: "t22q3", q: "அரசு உயர்நிலைப்பள்ளியில் நடைபெற்ற வனவிலங்கு வாரவிழாவின் சிறப்பு விருந்தினர் யார்? (பக்கம் 65)", type: "select", options: ["திரு. கலைச்செல்வன் (வனவிலங்கு - பறவைகள் ஆர்வலர்)", "திரு. அ. பெரியசாமி", "மாவட்ட ஆட்சியர்"], ans: "திரு. கலைச்செல்வன் (வனவிலங்கு - பறவைகள் ஆர்வலர்)" },
+          { id: "t22q4", q: "வனவிலங்கு வாரவிழாவில் 'வனப்பாதுகாப்பு நாடகம்' நடத்தியவர்கள் யார்? (பக்கம் 65)", type: "select", options: ["பசுமைப்படை மாணவர்கள்", "உடற்கல்வி ஆசிரியர்கள்", "பெற்றோர்கள்"], ans: "பசுமைப்படை மாணவர்கள்" },
+          { id: "t22q5", q: "வனவிலங்கு வாரவிழாவின் முக்கிய நோக்கங்களில் ஒன்று எது? (பக்கம் 65)", type: "select", options: ["வனவிலங்குச் சட்டங்களை மதித்தல் மற்றும் பறவைகளுக்குப் பாதுகாப்பு கொடுத்தல்", "காடுகளை அழித்தல்", "விலங்குகளை வேட்டையாடுதல்"], ans: "வனவிலங்குச் சட்டங்களை மதித்தல் மற்றும் பறவைகளுக்குப் பாதுகாப்பு கொடுத்தல்" }
+        ]
+      },
+      {
+        id: 23, category: "grade", title: "வ8. விளம்பரம் உருவாக்குதல்",
+        desc: "திருவாரூர் மூலிகைக் கண்காட்சி மற்றும் கீழடி அருங்காட்சியகம் விளம்பரம் (பக்கம் 66–67).",
+        passage: "1. மூலிகைக் கண்காட்சி (பக்கம் 66): திருவாரூர் வடக்கு வீதி தேனம்மாள் கலையரங்கில் 17.09.2025 முதல் 19.09.2025 வரை (காலை 10 முதல் மாலை 5 வரை). ஆடுதொடா, தும்பை, துளசி, கற்றாழை, தூதுவளை, நிலவேம்பு, ஓமவல்லி விற்பனை. 10 மூலிகைச் செடிகள் வாங்குவோருக்கு ஒரு பூவாளி இலவசம் + பராமரிப்புக் கையேடு.\n\n2. கீழடி அகழாய்வு (பக்கம் 67): மதுரை அருகே கீழடியில் தமிழ் எழுத்துகள் பொறிக்கப்பட்ட பானை ஓடுகள், சிவப்பு-கருப்புப் பானைகள், முத்துகள், சதுரங்கக் காய்கள், உறைக்கிணறுகள் கண்டெடுப்பு.",
+        questionPool: [
+          { id: "t23q1", q: "திருவாரூர் தோட்டக்கலைத்துறை நடத்தும் மூலிகைக் கண்காட்சி எங்கு நடைபெறுகிறது? (பக்கம் 66)", type: "select", options: ["தேனம்மாள் கலையரங்கம், வடக்கு வீதி, திருவாரூர்", "சரஸ்வதி மகால் நூலகம், தஞ்சாவூர்", "கீழடி அருங்காட்சியகம், மதுரை"], ans: "தேனம்மாள் கலையரங்கம், வடக்கு வீதி, திருவாரூர்" },
+          { id: "t23q2", q: "மூலிகைக் கண்காட்சியில் 10 மூலிகைச் செடிகள் வாங்குவோருக்கு இலவசமாக வழங்கப்படுவது என்ன? (பக்கம் 66)", type: "select", options: ["ஒரு பூவாளி இலவசம்", "ஒரு மிதிவண்டி இலவசம்", "ஒரு புத்தகம் இலவசம்"], ans: "ஒரு பூவாளி இலவசம்" },
+          { id: "t23q3", q: "மூலிகைச் செடிகள் வாங்கும் அனைவருக்கும் செடிகளைப் பராமரிக்க என்ன வழங்கப்படும்? (பக்கம் 66)", type: "select", options: ["மூலிகைச் செடி பராமரிப்புக் கையேடு", "குடை", "பணப்பை"], ans: "மூலிகைச் செடி பராமரிப்புக் கையேடு" },
+          { id: "t23q4", q: "மூலிகைக் கண்காட்சியைப் பொதுமக்கள் காண நுழைவுக் கட்டணம் உண்டா? (பக்கம் 66)", type: "select", options: ["இல்லை, கட்டணமின்றிக் கண்டுகளிக்கலாம்", "ரூ.100 கட்டணம்", "ரூ.50 கட்டணம்"], ans: "இல்லை, கட்டணமின்றிக் கண்டுகளிக்கலாம்" },
+          { id: "t23q5", q: "கீழடி தொல்லியல் அருங்காட்சியகம் எந்த நகருக்கு அருகே அமைந்துள்ளது? (பக்கம் 67)", type: "select", options: ["மதுரை", "சென்னை", "கோயம்புத்தூர்"], ans: "மதுரை" },
+          { id: "t23q6", q: "கீழடி அகழாய்வில் கண்டெடுக்கப்பட்ட தொல்லியல் பொருள்கள் எவை? (பக்கம் 67)", type: "select", options: ["தமிழ் எழுத்துகள் பொறிக்கப்பட்ட பானை ஓடுகள், சதுரங்கக் காய்கள், உறைக்கிணறுகள்", "கணினி மற்றும் அலைபேசிகள்", "நெகிழிப் பொம்மைகள்"], ans: "தமிழ் எழுத்துகள் பொறிக்கப்பட்ட பானை ஓடுகள், சதுரங்கக் காய்கள், உறைக்கிணறுகள்" }
+        ]
+      },
+      {
+        id: 24, category: "grade", title: "வ9. கடிதம் எழுதுதல்",
+        desc: "தாய்க்கு மின்னஞ்சல் பதில் கடிதம் மற்றும் தென்றல் நாளிதழ் ஆசிரியருக்குக் கடிதம் (பக்கம் 68–69 & 72).",
+        passage: "1. தாயின் அறிவுரைக் கடிதம் (பக்கம் 68): 'அன்பைவிட உயர்ந்தது இந்த உலகத்தில் வேறு எதுவுமே இல்லை. அனுபவங்களிடமிருந்து அதிகம் கற்றுக்கொள். உழைக்கத் தயங்காதே. நல்ல நண்பர்களைச் சேர்த்துக்கொள். உன் வாழ்க்கை நேராகும்.'\n\n2. தென்றல் நாளிதழ் கடிதம் (பக்கம் 69): ஊர் மக்களுக்குத் தொண்டு செய்த ஒருவரை (எ.கா: மரம் நட்டு வளர்த்தல்) விருதுக்குப் பரிந்துரைத்து நாளிதழ் ஆசிரியருக்குக் கடிதம் எழுதுதல்.",
+        questionPool: [
+          { id: "t24q1", q: "தாயின் கடிதத்தில் இந்த உலகத்தில் எதைவிட உயர்ந்தது வேறு எதுவுமே இல்லை என்று கூறப்பட்டுள்ளது? (பக்கம் 68)", type: "select", options: ["அன்பைவிட", "பணத்தைவிட", "பதவியைவிட"], ans: "அன்பைவிட" },
+          { id: "t24q2", q: "வாழ்க்கை நேராக அமைவதற்குத் தாய் கூறும் அறிவுரைகள் யாவை? (பக்கம் 68)", type: "select", options: ["உழைக்கத் தயங்காதே, நல்ல நண்பர்களைச் சேர்த்துக்கொள், அனுபவங்களிலிருந்து கற்றுக்கொள்", "சோம்பலாக இரு, நேரத்தை வீணாக்கு", "யாரிடமும் பேசாதே"], ans: "உழைக்கத் தயங்காதே, நல்ல நண்பர்களைச் சேர்த்துக்கொள், அனுபவங்களிலிருந்து கற்றுக்கொள்" },
+          { id: "t24q3", q: "உள்ளூர் சமூகத்திற்கு நன்மை செய்த ஒருவரை விருதுக்குப் பரிந்துரைக்க எந்த நாளிதழ் ஆசிரியருக்குக் கடிதம் எழுத வேண்டும்? (பக்கம் 69)", type: "select", options: ["தென்றல் நாளிதழ் ஆசிரியருக்கு", "பள்ளித் தலைமையாசிரியருக்கு", "நூலகருக்கு"], ans: "தென்றல் நாளிதழ் ஆசிரியருக்கு" },
+          { id: "t24q4", q: "மதிப்பீடு-2 (பக்கம் 72): ஒரு முறையான கடிதத்தில் இடம்பெற வேண்டிய சரியான வரிசை எது?", type: "select", options: ["அனுப்புநர், பெறுநர், பொருள், இப்படிக்கு", "இப்படிக்கு, பெறுநர், பொருள், அனுப்புநர்", "பொருள், அனுப்புநர், இப்படிக்கு, பெறுநர்"], ans: "அனுப்புநர், பெறுநர், பொருள், இப்படிக்கு" },
+          { id: "t24q5", q: "மதிப்பீடு-2 (பக்கம் 72): அலுவலகக் கடிதத்தில் 'இப்படிக்கு' என்பதன் கீழ் எது இடம்பெறும்?", type: "select", options: ["தங்கள் உண்மையுள்ள", "தங்கள் பாசமுள்ள", "தங்கள் பிரியமுள்ள"], ans: "தங்கள் உண்மையுள்ள" }
+        ]
+      },
+      {
+        id: 25, category: "grade", title: "வ10. கட்டுரை எழுதுதல் & மதிப்பீடு - 2",
+        desc: "கட்டுரை உட்தலைப்புகள், மதிப்பீடு-2 வினாக்கள் மற்றும் 1098 & 14417 உதவி எண்கள் (பக்கம் 70–74).",
+        passage: "மதிப்பீடு - 2 (பக்கம் 72–73) மற்றும் குழந்தை உதவி எண்கள் (பின் அட்டை):\n• குழந்தை உதவி எண் 1098 (24x7): குழந்தைத் திருமணம், குழந்தைத் தொழிலாளர் மற்றும் பாதுகாப்பற்ற சூழலில் உதவும் எண்.\n• கல்வித் தகவல் மையம் 14417: தேர்வு மற்றும் உயர்கல்விக்கு வழிகாட்டுதல் பெற அழைக்க வேண்டிய கட்டணமில்லா எண்.",
+        questionPool: [
+          { id: "t25q1", q: "மதிப்பீடு-2 (பக்கம் 72): 'மழைநீரைச் சிக்கனமாகப் பயன்படுத்த வேண்டும்.' - இத்தொடருக்குரிய வினா எது?", type: "select", options: ["மழைநீரை எவ்வாறு பயன்படுத்த வேண்டும்?", "மழைநீரை யார் பயன்படுத்த வேண்டும்?", "மழை எப்போது பெய்யும்?"], ans: "மழைநீரை எவ்வாறு பயன்படுத்த வேண்டும்?" },
+          { id: "t25q2
